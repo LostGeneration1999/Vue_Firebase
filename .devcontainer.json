@@ -1,0 +1,11 @@
+{
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "web",
+    "workspaceFolder": "/app",
+    "extensions": [
+        "msjsdiag.debugger-for-chrome",
+        "octref.vetur",
+        "dbaeumer.vscode-eslint",
+        "editorconfig.editorconfig"
+    ]
+}
