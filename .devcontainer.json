@@ -1,7 +1,7 @@
 {
     "dockerComposeFile": "docker-compose.yml",
     "service": "web",
-    "workspaceFolder": "/app",
+    "workspaceFolder": "/projects",
     "extensions": [
         "msjsdiag.debugger-for-chrome",
         "octref.vetur",
