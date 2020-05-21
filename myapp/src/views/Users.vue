@@ -5,8 +5,11 @@
         <hr>
 
         <h1>User No, {{ id }}</h1>
-        <route-view></route-view>
+        <!-- <route-view></route-view> -->
         <router-link :to=" '/users/' + (Number(id)+1) +'/profile' ">次のページへ</router-link>
+        <router-link :to="'/users/' + Number(id)+'/posts'">USER{{id}}の投稿ページへ</router-link>
+
+
         <div style='height: 700px;'></div>
         <router-link id='next-user' 
                      :to="{name: 'users-id-profile',

@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Users from './views/Users.vue'
 import Home from './views/Home.vue'
+
+// import Post from './views/Post.vue'
 import UsersPosts from './views/UsersPosts.vue'
 import UsersProfile from './views/UsersProfile.vue'
 import HeaderHome from './views/HeaderHome.vue'
@@ -18,6 +21,7 @@ export default new Router({
                 header: HeaderHome,
 
              }},
+               
               {path: '/users/:id', 
               components: {
                 default: Users,
@@ -28,7 +32,7 @@ export default new Router({
                    header: false
                },
                children: [
-                { path: 'posts/', component: UsersPosts },
+                { path: 'posts/', component: UsersPosts, name: 'users-id-posts' },
                 { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}]
              },
              { path: '/*',  redirect: '/'}],

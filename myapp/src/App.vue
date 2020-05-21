@@ -12,14 +12,12 @@
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
+
 
 export default {
   name: 'App',
   methods: {
-    // beforeEnter(){
-    //   this.$root.$emit('triggerScroll')
-    // }
+
   }
 }
 </script>
