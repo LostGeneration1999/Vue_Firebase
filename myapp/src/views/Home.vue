@@ -3,13 +3,10 @@
         <h3>HOme</h3>
         <button @click='toUsers'>userへ行く</button>
         <button @click='toPost'>投稿する</button>
-        <p>{{ myComponentDoubleCount }}</p>
-        <p>{{ tripleCount }}</p>
     </div>
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
 
 export default {
     methods: {
@@ -21,9 +18,6 @@ export default {
            this.$router.push({name: 'users-id-posts',
                               params: { id : 1 }})
        },
-    computed:  mapGetters({
-        myComponentDoubleCount: 'doubleCount'   
-    }),
     // computed: {
     //     ...mapGetters(['doubleCount', 'tripleCount'])
     // },

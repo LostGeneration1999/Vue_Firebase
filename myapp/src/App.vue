@@ -1,5 +1,18 @@
 <template>
   <div style='width: 100%; mergin auto; padding-top: 10%;' id="app">
+    <header>
+
+      <template v-if="isAuthenticated">
+       <router-link to='/' class='header-item'>HOME</router-link>
+       <span to='/' class='header-item' @click='logout'>ログアウト</span>
+      </template>
+
+      <template v-if="isAuthenticated">
+        <router-link to='/login' class='header-item'>ログイン</router-link>
+        <router-link to='/register' class='header-item'>登録</router-link>
+      </template>
+
+    </header>
     <router-view name='header'></router-view>
     <transition
        name='fade'
@@ -17,12 +30,22 @@
 export default {
   name: 'App',
   methods: {
-
+    isAuthenticated(){
+      console.log(this.$store.getters.idToken)
+      return this.$store.getters.idToken !== null;
+    },
+    logout() {
+      this.$store.dispatch('logout');
+    }
   }
 }
 </script>
 
 <style scoped>
+.header-item {
+  padding: 10px;
+  cursor: pointer;
+}
 .fade-enter,
 .fade-leave-to{
    opacity: 0;

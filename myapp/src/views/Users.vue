@@ -7,8 +7,8 @@
         <h1>User No, {{ id }}</h1>
         <!-- <route-view></route-view> -->
         <router-link :to=" '/users/' + (Number(id)+1) +'/profile' ">次のページへ</router-link>
-        <router-link  :to="{name: 'users-id-profile',
-                            params: {ud: Number(id)}}">USER{{id}}の投稿ページへ</router-link>
+        <router-link  :to="{name: 'users-id-posts',
+                            params: {id: Number(id)}}">USER{{id}}の投稿ページへ</router-link>
         
         <router-view></router-view>
 
