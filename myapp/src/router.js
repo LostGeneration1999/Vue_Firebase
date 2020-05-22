@@ -1,9 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-
 import Users from './views/Users.vue'
 import Home from './views/Home.vue'
-
+import axios from 'axios' //追記
+import VueAxios from 'vue-axios' //追記
 // import Post from './views/Post.vue'
 import UsersPosts from './views/UsersPosts.vue'
 import UsersProfile from './views/UsersProfile.vue'
@@ -12,6 +12,7 @@ import HeaderUsers from './views/HeaderUsers.vue'
 
 
 Vue.use(Router)
+Vue.use(VueAxios, axios) 
 
 export default new Router({
     mode: 'history',
@@ -22,18 +23,16 @@ export default new Router({
 
              }},
                
-              {path: '/users/:id', 
-              components: {
-                default: Users,
-                header: HeaderUsers},
-            
-               props: {
-                   default: true,
-                   header: false
-               },
+              { path: '/users/:id', 
+                components: {
+                 default: Users,
+                 header: HeaderUsers},
+                props: {
+                 default: true,
+                 header: false},
                children: [
-                { path: 'posts/', component: UsersPosts, name: 'users-id-posts' },
-                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}]
+                { path: 'posts', component: UsersPosts, name: 'users-id-posts' },
+                { path: 'profile', component: UsersProfile , name: 'users-id-profile'}]
              },
              { path: '/*',  redirect: '/'}],
 

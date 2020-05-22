@@ -1,5 +1,5 @@
 <template>
-  <div style='width: 70%; mergin auto; padding-top: 10%;' id="app">
+  <div style='width: 100%; mergin auto; padding-top: 10%;' id="app">
     <router-view name='header'></router-view>
     <transition
        name='fade'
