@@ -1,56 +1,66 @@
-import axios from '../../axios-database'
+import firebase from 'firebase'
 
-const state = {
-    index: []
+const state =  {
+    imageURL: null,
+    uploadFile: null,
+    infoMsg: null,
+    getImg : null,
 }
 
 const getters = {
-
+    imageURL: state => state.imageURL,
+    uploadFile: state => state.uploadFile,
+    infoMsg: state => state.infoMsg,
+    getImg: state => state.getImg
 }
+
 const mutations = {
-    setPosts(state, {posts}){
-        state.index = posts
+    uploadFile (state, uploadFile){
+        state.uploadFile = uploadFile
+    },
+    upload (state){
+        if (!state.uploadFile) {
+            state.infoMsg = '選択してください'
+            return;
+        }
+        state.imageURL = 'tmp/' + state.uploadFile.name
+        var storageRef = firebase.storage().ref().child(state.imageURL);
+        storageRef.put(state.uploadFile).then(function (snapshot) {
+            console.log('Uploaded a blob or file!');
+            console.log(snapshot)
+        });
+    },
+    initialize (state) {
+        state.imageURL = null;
+        state.uploadFile = null;
+        state.getImg = null;
+    },
+    getimage (state, URL){
+        var spaceRef = firebase.storage().ref().child(URL);
+        this.getImg = spaceRef;
     }
 }
 
 const actions = {
-    fetchComments({ commit }, authData) {
-        axios.get('comments',
-        {
-            headers: {
-                Authorization: `bearer ${authData.idToken}`
-            }
-        }
-        ).then(response => {
-            var posts = response.data.documents
-            console.log(posts)
-            commit('setPosts', { posts });
-        })
+    selectFile: function ({ commit }, e) {
+        e.preventDefault();
+        let files = e.target.files;
+        commit('uploadFile', files[0])
     },
-    registerComments({ commit }, authData){
-        axios.post('comments',
-            {fields: {name: { stringValue: authData.name},
-                      comment: { stringValue: authData.comment}
-                    }},
-            {
-                headers: {
-                    Authorization: `bearer ${authData.idToken}`}
-            }      
-            ).then(response => {
-                var posts = response.data.documents
-                commit('setPosts', { posts });
-            })
-            .catch(error => {
-                console.log(error);
-            });
-        this.name = "";
-        this.comment = "";
+    upload: function ({ commit },) {
+        commit('upload');
+    },
+    initialize: function({ commit }){
+        commit('initialize')
+    },
+    getimage: function({ commit }, URL){
+        commit('getimage', URL)
     }
 }
 
-// export default {
-//     state,
-//     getters,
-//     mutations,
-//     actions
-// }
+export default {
+    state,
+    getters,
+    mutations,
+    actions
+}

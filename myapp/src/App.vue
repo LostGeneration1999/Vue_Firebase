@@ -12,6 +12,7 @@
         <router-link to='/register' class='header-item'>登録</router-link>
       </template>
 
+
     </header>
     <router-view name='header'></router-view>
     <transition
@@ -31,8 +32,10 @@ export default {
   name: 'App',
   methods: {
     isAuthenticated(){
-      console.log(this.$store.getters.idToken)
       return this.$store.getters.idToken !== null;
+    },
+    showAuth(){
+      return this.$store.getters.idToken
     },
     logout() {
       this.$store.dispatch('logout');

@@ -1,5 +1,5 @@
 import router from '../../router'
-import axios from '../../axios-auth'
+import firebase from 'firebase'
 
 const state = {
     idToken: null
@@ -18,34 +18,26 @@ const mutations = {
 
 const actions = {
     login({ commit }, authData) {
-        axios.post('/accounts:signInWithPassword?key=AIzaSyCxrSkpsTwCm5CPT6bMCy_EZ0kw6smJloQ',
-        {
-            email: authData.email,
-            password: authData.password,
-            returnSecureToken: true
-        }
+        firebase.auth().signInWithEmailAndPassword(authData.email, authData.password
         ).then(response => {
             console.log(response);
-            commit('updateIdToken', response.data.idToken);
+            commit('updateIdToken', response.user.getIdToken().toString());
             router.push('/')
-
         })  
     },
     register({ commit }, authData) {
-        axios.post('/accounts:signUp?key=AIzaSyCxrSkpsTwCm5CPT6bMCy_EZ0kw6smJloQ',
-        {
-            email: authData.email,
-            password: authData.password,
-            returnSecureToken: true
-        }
+        firebase.auth().createUserWithEmailAndPassword(authData.email, authData.password
         ).then(response => {
             console.log(response);
-            commit('updateIdToken', response.data.idToken);
+            commit('updateIdToken', response.user.getIdToken().toString());
             router.push('/')
         })  
     },
     logout({ commit }) {
-        commit('updateIdToken', null);
+        firebase.auth().signOut(
+        ).then(function () {
+            commit('updateIdToken', null);
+        })
     }
 }
 

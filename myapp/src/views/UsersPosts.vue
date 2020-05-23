@@ -1,77 +1,67 @@
 <template>
     <div>
         <h3>マインドマップ投稿</h3>
-        <label for='name'>ニックネーム：ユーザー</label>
+        <label for='name'>ニックネーム：ユーザー{{ user.email }}</label>
         <br>
         <input id='name' v-model="name" type='text'>
         <br>
         <label for='comment' >結論</label>
         <textarea id='comment' v-model="comment"></textarea>
         <br>
-        <button @click='createComment'>サーバーに送る</button>
+        <p>画像アップロード</P>
+        <input id='name' v-model="name" type='text'>
+        <br>
+        <input type="file" name="image"  @change="selectFile">
+        <br>
 
-        <div v-for='post in posts' :key='post.name'>
-            <br>
-            <div>名前： {{ post.fields.name.stringValue}}</div>
-            <div>コメント： {{ post.fields.comment.stringValue}}</div>
-            <br>
-        </div>
-
+        <button @click='createMap'>サーバーに送る</button>
     </div>
 </template>
 
 <script>
-import axios from '../axios-database'
+import { db } from '../main'
+import { auth } from '../main'
+
 
 export default {
     data(){
         return{
-            name: "",
-            comment: "",
-            posts: []
+            user: auth.currentUser,
+            name: null,
+            comment: null,
+            user_uid: null,
+            user_email: null,
+            imageURL: null,
+            maps: {},
         }
     },
     computed: {
-        idToken() {
+        idToken: function() {
             return this.$store.getters.idToken;
             }
         },
-        created() {
-            axios.get('comments',
-            {
-                headers: {
-                    Authorization: `Bearer ${this.idToken}`
-                }
-            }
-            ).then(response => {
-                this.posts = response.data.documents;
-                console.log(this.posts);
-            })
-        },
     methods: {
-        createComment() {
-            axios.post('comments',
-            {
-                fields: {
-                    name: {stringValue: this.name},
-                    comment: {stringValue: this.comment}
-               }
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${this.idToken}`
-                }
-            }
-            ).then(response => {
-                console.log(response);
+        selectFile(e){
+            this.$store.dispatch('selectFile',e)
+        },
+        createMap () {
+            this.$store.dispatch('upload')
+            db.collection('comments').add({
+                name: this.name,
+                comment: this.comment,
+                user: this.user.email,
+                uid: this.user.uid,
+                imageURl: this.$store.getters.imageURL
             })
-            .catch(error => {
-                console.log(error);
-            });
-        this.name = "";
-        this.comment = "";
+            .then(function (docRef){
+                console.log("Document written with ID: ", docRef.id);
+                this.$store.dispatch('initialize');
+            })
+            .catch(function (error) {
+                console.log("error", error);
+            })
         }
-    }
+    } 
 }
 
 

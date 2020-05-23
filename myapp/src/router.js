@@ -9,11 +9,14 @@ import UsersPosts from './views/UsersPosts.vue'
 import UsersProfile from './views/UsersProfile.vue'
 import HeaderHome from './views/HeaderHome.vue'
 import HeaderUsers from './views/HeaderUsers.vue'
+import UsersUpload from './views/Upload.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 
+
 Vue.use(Router)
 Vue.use(VueAxios, axios) 
+
 
 //サーバーに行く前
 const interceptorRequest = axios.interceptors.request.use(
@@ -86,26 +89,8 @@ export default new Router({
                   header: false},
                children: [
                 { path: 'posts/', component: UsersPosts, name: 'users-id-posts' },
-                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}]
+                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'},
+                { path: 'upload/', component: UsersUpload, name: 'users-id-upload'}]
              },
              { path: '/*',  redirect: '/'}],
-
-    // scrollBehavior(to, from, savedPosition){
-    //     // 非同期処理受付
-    //     return new Promise(resolve => {
-    //         this.app.$root.$once('triggerScroll', () => {
-    //             let position = {x: 0, y: 0};
-    //             if (savedPosition){
-    //                 position =  savedPosition;
-    //             }
-    //             if (to.hash){
-    //                 position = { 
-    //                     selector : to.hash 
-    //                 };
-    //             }
-    //             resolve(position);
-    //         });
-    //     });
-
-    // }
 });
