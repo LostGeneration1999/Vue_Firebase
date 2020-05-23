@@ -9,7 +9,7 @@ import UsersPosts from './views/UsersPosts.vue'
 import UsersProfile from './views/UsersProfile.vue'
 import HeaderHome from './views/HeaderHome.vue'
 import HeaderUsers from './views/HeaderUsers.vue'
-import UsersUpload from './views/Upload.vue'
+import Maps from './views/Map.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 
@@ -80,6 +80,10 @@ export default new Router({
                 }
              },
              {
+                 path: '/maps/:id',
+                 component: Maps,
+             },
+             {
                  path: '/users/:id', 
                  components: {
                  default: Users,
@@ -89,8 +93,14 @@ export default new Router({
                   header: false},
                children: [
                 { path: 'posts/', component: UsersPosts, name: 'users-id-posts' },
-                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'},
-                { path: 'upload/', component: UsersUpload, name: 'users-id-upload'}]
+                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}],
+                beforeEnetr(to, from, next){
+                    if (store.getters.idToken){
+                        next();
+                    }else {
+                        next('/login');
+                    }
+                }
              },
              { path: '/*',  redirect: '/'}],
 });
