@@ -1,18 +1,27 @@
 import router from '../../router'
 import firebase from 'firebase'
+import { auth } from '../../main'
 
 const state = {
-    idToken: null
+    idToken: null,
+    displayName: null,
+    userUID: null,
 }
 
 const getters = {
-    idToken: state => state.idToken
+    idToken: state => state.idToken,
+    displayName: state => state.displayName
 }
 
 const mutations = {
     updateIdToken(state, idToken){
         state.idToken = idToken;
-        // state.username = user.name;
+    },
+    getUserData(state){
+        state.displayName =  auth.currentUser.displayName;
+        state.userUID = auth.currentUser.uid;
+        console.log( state.displayName);
+        console.log(state.userUID)
     }
 }
 
@@ -21,22 +30,30 @@ const actions = {
         firebase.auth().signInWithEmailAndPassword(authData.email, authData.password
         ).then(response => {
             console.log(response);
+            commit('getUserData');
             commit('updateIdToken', response.user.getIdToken().toString());
             router.push('/')
-        })  
+        })
     },
     register({ commit }, authData) {
         firebase.auth().createUserWithEmailAndPassword(authData.email, authData.password
         ).then(response => {
-            console.log(response);
+            console.log(authData.displayName);
             commit('updateIdToken', response.user.getIdToken().toString());
-            router.push('/')
-        })  
+            return response.user.updateProfile({
+                displayName: authData.displayName,
+            }) 
+        }).then(res => {
+            commit('getUserData');
+            console.log(res);
+            router.push('/');
+        }) 
     },
     logout({ commit }) {
         firebase.auth().signOut(
         ).then(function () {
             commit('updateIdToken', null);
+            commit('getUserData');
         })
     }
 }

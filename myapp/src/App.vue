@@ -1,19 +1,21 @@
 <template>
-  <div style='width: 100%; mergin auto; padding-top: 10%;' id="app">
-    <header>
+    <v-app>
+        <v-app-bar color="gray accent-4" dark app>
+           <v-toolbar-title>心の思考</v-toolbar-title>
 
-      <template v-if="isAuthenticated">
-       <router-link to='/' class='header-item'>HOME</router-link>
-       <span to='/' class='header-item' @click='logout'>ログアウト</span>
-      </template>
+              <template v-if="isAuthenticated">
+                <v-btn to='/' class='header-item'>HOME</v-btn>
+                <v-btn to='/' class='header-item' @click='logout()'>ログアウト</v-btn>
+                <!-- <v-btn @click='toUsers'>USERあああ</v-btn> -->
+                <v-btn to='/posts'>投稿画面</v-btn>
 
-      <template v-if="isAuthenticated">
-        <router-link to='/login' class='header-item'>ログイン</router-link>
-        <router-link to='/register' class='header-item'>登録</router-link>
-      </template>
+              </template>
 
-
-    </header>
+              <template v-if="isAuthenticated">
+                <v-btn to='/login' class='header-item'>ログイン</v-btn>
+                <v-btn to='/register' class='header-item'>登録</v-btn>
+              </template>
+        </v-app-bar>
     <router-view name='header'></router-view>
     <transition
        name='fade'
@@ -21,25 +23,37 @@
         <!-- @before-enter='beforeEnter' -->
       <router-view></router-view>
     </transition>
-
-  </div>
+    </v-app>
 </template>
 
 <script>
-
-
 export default {
-  name: 'App',
+  data (){
+    return {
+      displayName: null,
+      userUID: null  
+    }
+  },
+  compused: {
+    showName(){
+      return this.$store.getters.displayName;
+    }
+  },
   methods: {
     isAuthenticated(){
       return this.$store.getters.idToken !== null;
     },
     showAuth(){
-      return this.$store.getters.idToken
+      return this.$store.getters.idToken;
     },
     logout() {
       this.$store.dispatch('logout');
-    }
+    },
+    // toUsers() {
+    //       console.log(this.$store.userUID)
+    //       this.$router.push({name: 'users-id-profile', 
+    //                          params: { id : this.$store.userUID }});
+    // },
   }
 }
 </script>

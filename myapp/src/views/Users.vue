@@ -1,12 +1,7 @@
 <template>
     <div>
-        <h3>User</h3>
-        <router-link to="/users/1">USER1のページへ</router-link>
-        <hr>
-
-        <h1>User No, {{ id }}</h1>
-        <!-- <route-view></route-view> -->
-        <router-link :to=" '/users/' + (Number(id)+1) +'/profile' ">次のページへ</router-link>
+        <!-- <h3>マインドマップ投稿</h3>
+        <label for='name'>ニックネーム：ユーザー{{ getUser }}</label> -->
         <router-link  :to="{name: 'users-id-posts',
                             params: {id: Number(id)}}">USER{{id}}の投稿ページへ</router-link>
         
@@ -25,12 +20,16 @@
 
 <script>
 export default {
-    props: ['id'],
-    watch: {
-        $route(to, from){
-            console.log(to);
-            console.log(from);
+    data() {
+        return {
+            displayName: null
+
         }
-    }
+    },
+    // computed: {
+    //     getUser() {
+    //         return this.$store.getters.displayName;
+    //     }
+    // }
 };
 </script>

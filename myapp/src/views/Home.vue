@@ -1,9 +1,9 @@
 <template>
-    <div>
-        <h3>HOme</h3>
-        <button @click='toUsers'>userへ行く</button>
-        <button @click='toPost'>投稿する</button>
-        <button @click='toUpload'>Uploadする</button>
+    <v-app>
+        <v-content>
+        <v-btn @click='toUsers'>ユーザーああああ</v-btn>
+
+        <!-- <v-btn @click='toPost'>投稿おおおおお</v-btn> -->
         <br>
 
         <button @click='getMap'>サーバーから受け取る</button>
@@ -31,20 +31,19 @@
             <img :src='image' height="200" width="200"/>
         </span>
         
-
-    </div>
+        </v-content>
+    </v-app>
 </template>
 
 <script>
 import { db } from '../main'
-import { auth } from '../main'
 
 
 export default {
     el: "#app0",
     data (){
         return {
-            user: auth.currentUser,
+            user: null,
             image: null,
             name: null,
             comment: null,
@@ -82,17 +81,10 @@ export default {
             console.log(this.image);
     },
       toUsers() {
+          console.log(this.$store.userUID)
           this.$router.push({name: 'users-id-profile', 
-                             params: { id : this.user.email }});
+                             params: { id : this.$store.userUID }});
       },
-       toPost() {
-           this.$router.push({name: 'users-id-posts',
-                              params: { id : this.user.email }})
-       },
-       toUpload() {
-           this.$router.push({name: 'users-id-upload',
-                              params: { id : this.user.email  }})
-       }
     }
 }
 </script>

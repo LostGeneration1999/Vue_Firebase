@@ -5,11 +5,7 @@ import Router from 'vue-router'
 import Users from './views/Users.vue'
 import Home from './views/Home.vue'
 import store from './store.js'
-import UsersPosts from './views/UsersPosts.vue'
-import UsersProfile from './views/UsersProfile.vue'
-import HeaderHome from './views/HeaderHome.vue'
-import HeaderUsers from './views/HeaderUsers.vue'
-import Maps from './views/Map.vue'
+import Posts from './views/Posts.vue'
 import Login from './components/Login.vue'
 import Register from './components/Register.vue'
 
@@ -47,7 +43,6 @@ export default new Router({
     routes: [{  path: '/', 
                 components: {
                     default: Home,
-                    header: HeaderHome,
              },
                 beforeEnter(to, from ,next){
                     if (store.getters.idToken){
@@ -80,20 +75,24 @@ export default new Router({
                 }
              },
              {
-                 path: '/maps/:id',
-                 component: Maps,
+                 path: '/posts',
+                 component: Posts,
+                 beforeEnter(to, from ,next){
+                if (store.getters.idToken){
+                        next();
+                    } else {
+                        next('/login');
+                    }
+                 }
              },
              {
                  path: '/users/:id', 
                  components: {
-                 default: Users,
-                 header: HeaderUsers},
-                 props: {
-                  default: true,
-                  header: false},
-               children: [
-                { path: 'posts/', component: UsersPosts, name: 'users-id-posts' },
-                { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}],
+                 default: Users},
+                 props: true,
+                //children: [
+                // { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}
+                // ],
                 beforeEnetr(to, from, next){
                     if (store.getters.idToken){
                         next();
