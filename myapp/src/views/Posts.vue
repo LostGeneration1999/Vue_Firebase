@@ -31,6 +31,7 @@
 
 <script>
 import { db } from '../main'
+import moment from  'moment'
 
 
 export default {
@@ -41,6 +42,7 @@ export default {
             email: null,
             title: null,
             comment: null,
+            moment: null,
             imageURL: null,
             maps: {},
         }
@@ -60,18 +62,21 @@ export default {
         },
         createMap () {
             this.$store.dispatch('upload')
+            this.moment = moment().format('YYYY-MM-DD')
             console.log(this);
             db.collection('comments').add({
                 name: this.title,
                 comment: this.comment,
                 user: this.email,
                 uid: this.userUID,
+                moment: this.moment,
                 imageURl: this.$store.getters.imageURL
             })
             .then(function (docRef){
                 console.log(this);
                 console.log("Document written with ID: ", docRef.id);
                 this.$store.dispatch('initialize');
+                
             })
             .catch(function (error) {
                 console.log("error", error);

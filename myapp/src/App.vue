@@ -1,10 +1,8 @@
 <template>
     <v-app>
         <v-app-bar color="gray accent-4" dark app>
-           <v-toolbar-title>心の思考</v-toolbar-title>
-
               <template v-if="isAuthenticated">
-                <v-btn to='/' class='header-item'>HOME</v-btn>
+                <v-btn to='/' class='header-item'>Mind Map</v-btn>
                 <v-btn to='/' class='header-item' @click='logout()'>ログアウト</v-btn>
                 <!-- <v-btn @click='toUsers'>USERあああ</v-btn> -->
                 <v-btn to='/posts'>投稿画面</v-btn>

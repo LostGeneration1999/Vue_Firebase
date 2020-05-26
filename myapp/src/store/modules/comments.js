@@ -38,9 +38,11 @@ const mutations = {
     getimage (state, URL){
         console.log(URL);
         var spaceRef = firebase.storage().ref().child(URL);
+        console.log(spaceRef);
         spaceRef.getDownloadURL().then(function(url){
             state.getImg = url;
         })
+        console.log(state.getImg);
     }
 }
 

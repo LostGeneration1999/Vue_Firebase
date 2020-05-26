@@ -44,13 +44,13 @@ export default new Router({
                 components: {
                     default: Home,
              },
-                beforeEnter(to, from ,next){
-                    if (store.getters.idToken){
-                        next();
-                    } else {
-                        next('/login');
-                    }
-                }
+                // beforeEnter(to, from ,next){
+                //     if (store.getters.idToken){
+                //         next();
+                //     } else {
+                //         next('/login');
+                //     }
+                // }
             },
              { 
                 path: '/login',
