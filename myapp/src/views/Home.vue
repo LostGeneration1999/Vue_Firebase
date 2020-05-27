@@ -1,34 +1,30 @@
 <template>
     <v-app>
         <v-content>
-            <v-layout text-xs-center px-3 py-3  row wrap>
-                <v-btn @click='getMap'>サーバーから受け取る</v-btn>
-                    <v-card lg4 sm12 xs12 v-for='map in maps' :key='map.id' @click='getData(map);'>
-                        <v-flex>
-                        <div>名前： {{ map.name }}</div>
-                        <br>
-                        <div>コメント： {{ map.comment }}</div>
-                        <div>作成日：{{ map.moment }}</div> 
-                        <span class='header-item'>{{ map.id }}</span>
-                        </v-flex>
+            <h1>投稿一覧</h1>
+            <v-layout text-xs-center mt-5 px-3 py-3  row wrap>
+                <v-flex lg4 sm6 xs12 v-for='map in maps' :key='map.id' >
+                    <v-card dark class="ma-2" @click='getData(map);'>
+                        <v-card-title aliign-center class="title headline">{{ map.name }}</v-card-title>
+                        <v-card-subtitle>{{ map.moment }}</v-card-subtitle>
+                        <v-divider class="mx-3"></v-divider>
+                        <v-card-text>
+                            {{ map.comment }}
+                        </v-card-text>
                     </v-card>
+                </v-flex>
 
-                    <v-dialog v-model="dialog" scrollable max-width="80%">
-                        <v-card>
-                        <img :src='image' height="200" width="200"/>
-                        <v-card-title>{{ name }}</v-card-title>
-                        <v-card-text>{{ comment }}</v-card-text>
-
-                        </v-card>
-                    </v-dialog> 
+                <v-dialog v-model="dialog" scrollable max-width="80%">
+                    <img :src='image' height="100%" width="100%"/>
+                </v-dialog> 
             </v-layout>
         </v-content>
     </v-app>
 </template>
 
 <script>
+import firebase from 'firebase'
 import { db } from '../main'
-
 
 export default {
     data (){
@@ -40,42 +36,40 @@ export default {
             moment: null,
             dialog: false,
             id: [],
-            maps: [],
+            maps: []
         }
     },
-    // composed: {
-    //     getimage_: function(imageurl){
-    //         this.$store.dispatch('getimage',imageurl);
-    //         this.image = this.$store.getters.getImg;
-    //         this.$store.dispatch.initialize;
-    //     }
-    // },
+    created() {
+            // コメント取得
+             {
+                var buff = [];
+                db.collection("comments").get().then(function(querySnapshot) {
+                    querySnapshot.forEach(doc =>  {
+                    console.log(doc.id, " => ", doc.data());
+                    var data = doc.data();
+                    data['id'] = doc.id;
+                    buff.push(data);
+                    });
+                }).then(r => {
+                    console.log(r);
+                    this.maps = buff;
+                });
+      }
+    },
     methods: {
-     getMap: function() {
-        var buff = [];
-        db.collection("comments").get().then(function(querySnapshot) {
-            querySnapshot.forEach(doc =>  {
-            console.log(doc.id, " => ", doc.data());
-            var data = doc.data();
-            data['id'] = doc.id;
-            buff.push(data);
-            });
-        }).then(r => {
-            console.log(r);
-            this.maps = buff;
-        });
-      },
-     getData: function(map){
-            this.name = map.name;
-            this.comment = map.comment;
-            this.moment = map.moment;
-            console.log(this.name);
-            // console.log(map.imageURl);
-            this.$store.dispatch('getimage',map.imageURl);
-            this.image = this.$store.getters.getImg;
-            this.$store.dispatch.initialize;
-            console.log(this.image);
-            this.dialog = true;
+    // 画像データの取得
+    getData: function(map){
+        this.image = null,
+        this.name = map.name;
+        this.comment = map.comment;
+        this.moment = map.moment;
+        console.log(this.name);
+
+        var spaceRef = firebase.storage().ref().child(map.imageURl);
+        spaceRef.getDownloadURL().then(url => {
+                this.image = url;
+                this.dialog = true;
+        })
     },
       toUsers() {
           console.log(this.$store.userUID)
@@ -87,6 +81,9 @@ export default {
 </script>
 
 <style scoped>
+.title {
+    text-align: center;
+}
 .header-item {
   padding: 10px;
   cursor: pointer;

@@ -53,7 +53,6 @@ const actions = {
         firebase.auth().signOut(
         ).then(function () {
             commit('updateIdToken', null);
-            commit('getUserData');
         })
     }
 }

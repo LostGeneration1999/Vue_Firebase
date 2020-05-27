@@ -1,8 +1,8 @@
 <template>
     <v-app>
-         <v-card width='50%' class="mx-auto mt-5">
+         <v-card width='90%' class="mx-auto mt-5">
             <v-card-title>
-                <h1 class='display-1'>マインドマップを投稿する</h1>
+                <h2 class='display-1 item--center'>Post</h2>
             </v-card-title>
             <v-card-text>
             <v-form>
@@ -23,7 +23,7 @@
             </v-card-text>
             
             <v-card-actions>
-                <v-btn class='info' @click='createMap'>投稿</v-btn>
+                <v-btn class='info item--center' @click='createMap'>投稿</v-btn>
             </v-card-actions>
         </v-card>
     </v-app>
@@ -87,3 +87,11 @@ export default {
 
 
 </script>
+
+<style scoped>
+
+.item--center {
+    margin-left: auto;
+    margin-right: auto;
+}
+</style>

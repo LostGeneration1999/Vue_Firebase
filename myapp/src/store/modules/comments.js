@@ -4,14 +4,11 @@ const state =  {
     imageURL: null,
     uploadFile: null,
     infoMsg: null,
-    getImg : null,
 }
 
 const getters = {
     imageURL: state => state.imageURL,
     uploadFile: state => state.uploadFile,
-    infoMsg: state => state.infoMsg,
-    getImg: state => state.getImg
 }
 
 const mutations = {
@@ -33,17 +30,7 @@ const mutations = {
     initialize (state) {
         state.imageURL = null;
         state.uploadFile = null;
-        state.getImg = null;
     },
-    getimage (state, URL){
-        console.log(URL);
-        var spaceRef = firebase.storage().ref().child(URL);
-        console.log(spaceRef);
-        spaceRef.getDownloadURL().then(function(url){
-            state.getImg = url;
-        })
-        console.log(state.getImg);
-    }
 }
 
 const actions = {
@@ -58,9 +45,6 @@ const actions = {
     initialize: function({ commit }){
         commit('initialize')
     },
-    getimage: function({ commit }, URL){
-        commit('getimage', URL)
-    }
 }
 
 export default {

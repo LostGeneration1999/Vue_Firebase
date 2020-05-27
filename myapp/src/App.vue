@@ -1,17 +1,16 @@
 <template>
     <v-app>
         <v-app-bar color="gray accent-4" dark app>
+          <v-btn to='/' class='header-item'>Mind Map</v-btn>
               <template v-if="isAuthenticated">
-                <v-btn to='/' class='header-item'>Mind Map</v-btn>
                 <v-btn to='/' class='header-item' @click='logout()'>ログアウト</v-btn>
                 <!-- <v-btn @click='toUsers'>USERあああ</v-btn> -->
                 <v-btn to='/posts'>投稿画面</v-btn>
-
               </template>
 
-              <template v-if="isAuthenticated">
+              <template v-if="!isAuthenticated">
                 <v-btn to='/login' class='header-item'>ログイン</v-btn>
-                <v-btn to='/register' class='header-item'>登録</v-btn>
+                <!-- <v-btn to='/register' class='header-item'>登録</v-btn> -->
               </template>
         </v-app-bar>
     <router-view name='header'></router-view>
@@ -25,6 +24,7 @@
 </template>
 
 <script>
+
 export default {
   data (){
     return {
@@ -32,26 +32,23 @@ export default {
       userUID: null  
     }
   },
-  compused: {
+  computed: {
     showName(){
       return this.$store.getters.displayName;
-    }
-  },
-  methods: {
+    },
     isAuthenticated(){
+      console.log(this.$store.getters.idToken);
       return this.$store.getters.idToken !== null;
     },
+  },
+  methods: {
+
     showAuth(){
       return this.$store.getters.idToken;
     },
     logout() {
       this.$store.dispatch('logout');
     },
-    // toUsers() {
-    //       console.log(this.$store.userUID)
-    //       this.$router.push({name: 'users-id-profile', 
-    //                          params: { id : this.$store.userUID }});
-    // },
   }
 }
 </script>
