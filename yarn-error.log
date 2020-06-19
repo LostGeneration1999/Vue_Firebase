@@ -1,5 +1,5 @@
 Arguments: 
-  /usr/local/bin/node /opt/yarn-v1.22.4/bin/yarn.js serve
+  /usr/local/bin/node /opt/yarn-v1.22.4/bin/yarn.js build
 
 PATH: 
   /usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin

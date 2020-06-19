@@ -1,25 +1,23 @@
 <template>
         <v-content>
-             <v-carousel
-                    cycle
-                    height="400"
-                    hide-delimiter-background
-                    show-arrows-on-hover>
-                    <v-carousel-item
-                    v-for="(slide, i) in slides"
+            <v-carousel
+                cycle
+                height="400"
+                hide-delimiter-background
+                show-arrows-on-hover>
+                <v-carousel-item
+                    v-for="(item,i) in items"
                     :key="i"
-                    :src="images.src">
-                    <v-sheet
-                        height="100%">
-                        <v-row
+                    :src="require(`../assets/${item}.jpg`)"
+                    reverse-transition="fade-transition"
+                    transition="fade-transition">
+                    <v-row
                         class="fill-height"
                         align="center"
                         justify="center">
-                        <div class="display-3">{{ slide }} Slide</div>
-                        </v-row>
-                    </v-sheet>
-                    </v-carousel-item>
-                </v-carousel>
+                        <div class='white--text  display-3'>{{ slides[i] }}</div>
+                    </v-row></v-carousel-item>
+            </v-carousel>
             <v-layout text-xs-center mt-5 px-3   row wrap>
                 <v-flex lg4 sm6 xs12 v-for='map in maps' text-xs-center :key='map.id' >
                     <v-card  class="ma-2" max-width="500px" center @click='getData(map);'>
@@ -55,17 +53,11 @@ export default {
             dialog: false,
             id: [],
             maps: [],
-            images: [
-                '@/assets/Hobby1',
-                '@/assets/Mindmap1',
-                '@/assets/src1'
-            ],
+            items: ['src1','brain','Hobby1'],
             slides: [
-                'First',
-                'Second',
-                'Third',
-                'Fourth',
-                'Fifth',
+                'Technology',
+                'Mind Map',
+                'Hobby & Private',
             ],
         }
     },
