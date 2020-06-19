@@ -1,5 +1,5 @@
 <template>
-    <v-app>
+    <v-content>
         <v-card width='90%' class="mx-auto mt-5">
             <v-card-title>
                 <h2 class='display-1 item--center'>Sign In</h2>
@@ -25,7 +25,7 @@
                 <v-btn  class='info item--center' @click='login'>ログイン</v-btn>
             </v-card-actions>
         </v-card>
-    </v-app>
+    </v-content>
 </template>
 
 <script>

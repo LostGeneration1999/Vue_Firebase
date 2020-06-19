@@ -6,22 +6,20 @@
             </v-card-title>
             <v-card-text>
             <v-form>
+                <v-select   :items="items"
+                            v-model='theme'
+                            label="投稿のテーマを選んでください"
+                            ></v-select>
                 <v-text-field id='title'
-                              label='マインドマップのテーマ'
+                              label='タイトル'
                               v-model='title'
-                              type='text'/>
+                              type='text'/>     
                 <v-textarea id='comment'
-                              label='マインドマップの詳細'
+                              label='投稿の詳細'
                               v-model='comment'/>
-                <!-- <v-file-input 
-                              name='image'
-                              type='file'
-                              label="画像ファイルをアップロードしてください"
-                              @change='selectFile' /> -->
             <input type="file" name="image"  @change="selectFile">
             </v-form>
             </v-card-text>
-            
             <v-card-actions>
                 <v-btn class='info item--center' @click='createMap'>投稿</v-btn>
             </v-card-actions>
@@ -37,8 +35,11 @@ import moment from  'moment'
 export default {
     data(){
         return{
+            items: ['Product', 'MindMap', 'Hobby'],
             displayName: null,
             userUID: null,
+            theme: null,
+            number: null,
             email: null,
             title: null,
             comment: null,
@@ -63,10 +64,12 @@ export default {
         createMap () {
             this.$store.dispatch('upload')
             this.moment = moment().format('YYYY-MM-DD')
-            console.log(this);
+            var num = Math.ceil(Math.random()*4);
             db.collection('comments').add({
                 name: this.title,
                 comment: this.comment,
+                theme: this.theme,
+                number: num,
                 user: this.email,
                 uid: this.userUID,
                 moment: this.moment,

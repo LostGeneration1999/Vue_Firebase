@@ -1,7 +1,37 @@
 <template>
     <v-app>
+        <v-navigation-drawer
+                  v-model="drawer"
+                  absolute
+                  temporary>
+              <v-list-item>
+                <v-list-item-avatar>
+                  <v-img src="https://randomuser.me/api/portraits/men/78.jpg"></v-img>
+                </v-list-item-avatar>
+
+   
+                <v-list-item-content>
+                  <v-list-item-title>烏丸ゆりっぺ</v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list dense>
+                <v-list-item-content>
+                  京都の私立大学院生。
+                  維持管理に関する研究をしており、エンジニア志望。
+                </v-list-item-content>
+                <v-divider></v-divider>
+                <v-list-item-icon>
+              </v-list-item-icon>
+                <v-list-item-content>
+                  <v-list-item-title>Github</v-list-item-title>
+                </v-list-item-content>
+              </v-list>
+        </v-navigation-drawer>
+
         <v-app-bar color="gray accent-4" dark app>
-          <v-btn to='/' class='header-item'>Mind Map</v-btn>
+              <v-btn class='header-item' @click.stop="drawer = !drawer">PROFILE</v-btn>
+              <v-btn to='/' class='header-item'>HOME</v-btn>
               <template v-if="isAuthenticated">
                 <v-btn to='/' class='header-item' @click='logout()'>ログアウト</v-btn>
                 <!-- <v-btn @click='toUsers'>USERあああ</v-btn> -->
@@ -13,6 +43,8 @@
                 <!-- <v-btn to='/register' class='header-item'>登録</v-btn> -->
               </template>
         </v-app-bar>
+
+        
     <router-view name='header'></router-view>
     <transition
        name='fade'
@@ -29,7 +61,8 @@ export default {
   data (){
     return {
       displayName: null,
-      userUID: null  
+      userUID: null,
+      drawer: null
     }
   },
   computed: {
@@ -82,6 +115,5 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>

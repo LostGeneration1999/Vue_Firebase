@@ -14,6 +14,11 @@ Vue.config.productionTip = false
 
 // Firebase設定
 let firebaseConfig = {
+  apiKey: "AIzaSyCxrSkpsTwCm5CPT6bMCy_EZ0kw6smJloQ",
+  authDomain: "mindmap-app-d9302.firebaseapp.com",
+  databaseURL: "https://mindmap-app-d9302.firebaseio.com",
+  projectId: "mindmap-app-d9302",
+  storageBucket: "mindmap-app-d9302.appspot.com",
 }
 
 firebase.initializeApp(firebaseConfig);
