@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-import session from './store/modules/session'
-import comments from './store/modules/comments'
+import session from './store/session'
+import comments from './store/comments'
 
 Vue.use(Vuex);
 

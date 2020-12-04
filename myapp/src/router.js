@@ -11,7 +11,7 @@ import Register from './components/Register.vue'
 
 
 Vue.use(Router)
-Vue.use(VueAxios, axios) 
+Vue.use(VueAxios, axios)
 
 
 //サーバーに行く前
@@ -40,66 +40,58 @@ axios.interceptors.response.eject(interceptorRequest);
 
 export default new Router({
     mode: 'history',
-    routes: [{  path: '/', 
-                components: {
-                    default: Home,
-             },
-                // beforeEnter(to, from ,next){
-                //     if (store.getters.idToken){
-                //         next();
-                //     } else {
-                //         next('/login');
-                //     }
-                // }
-            },
-             { 
-                path: '/login',
-                component: Login,
-                beforeEnter(to, from ,next){
-                    if (store.getters.idToken){
-                        next('/');
-                    } else {
-                        next();
-                    }
-                }
-            },
-             { 
-                path: '/register',
-                component: Register,
-                beforeEnter(to, from ,next){
-                    if (store.getters.idToken){
-                        next('/');
-                    } else {
-                        next();
-                    }
-                }
-             },
-             {
-                 path: '/posts',
-                 component: Posts,
-                 beforeEnter(to, from ,next){
-                if (store.getters.idToken){
-                        next();
-                    } else {
-                        next('/login');
-                    }
-                 }
-             },
-             {
-                 path: '/users/:id', 
-                 components: {
-                 default: Users},
-                 props: true,
-                //children: [
-                // { path: 'profile/', component: UsersProfile , name: 'users-id-profile'}
-                // ],
-                beforeEnetr(to, from, next){
-                    if (store.getters.idToken){
-                        next();
-                    }else {
-                        next('/login');
-                    }
-                }
-             },
-             { path: '/*',  redirect: '/'}],
+    routes: [{
+        path: '/',
+        components: {
+            default: Home,
+        },
+    },
+    {
+        path: '/login',
+        component: Login,
+        beforeEnter(to, from, next) {
+            if (store.getters.idToken) {
+                next('/');
+            } else {
+                next();
+            }
+        }
+    },
+    {
+        path: '/register',
+        component: Register,
+        beforeEnter(to, from, next) {
+            if (store.getters.idToken) {
+                next('/');
+            } else {
+                next();
+            }
+        }
+    },
+    {
+        path: '/posts',
+        component: Posts,
+        beforeEnter(to, from, next) {
+            if (store.getters.idToken) {
+                next();
+            } else {
+                next('/login');
+            }
+        }
+    },
+    {
+        path: '/users/:id',
+        components: {
+            default: Users
+        },
+        props: true,
+        beforeEnetr(to, from, next) {
+            if (store.getters.idToken) {
+                next();
+            } else {
+                next('/login');
+            }
+        }
+    },
+    { path: '/*', redirect: '/' }],
 });

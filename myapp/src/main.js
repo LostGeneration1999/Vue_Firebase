@@ -7,26 +7,23 @@ import firebase from 'firebase'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
-Vue.use(Vuetify,{
-  iconfont: 'md',
-})
-Vue.config.productionTip = false
+Vue.use(Vuetify, { iconfont: 'md', });
+Vue.config.productionTip = false;
 
-// Firebase設定
-let firebaseConfig = {
-  apiKey: "AIzaSyCxrSkpsTwCm5CPT6bMCy_EZ0kw6smJloQ",
-  authDomain: "mindmap-app-d9302.firebaseapp.com",
-  databaseURL: "https://mindmap-app-d9302.firebaseio.com",
-  projectId: "mindmap-app-d9302",
-  storageBucket: "mindmap-app-d9302.appspot.com",
-}
+const firebaseConfig = {
+  apiKey: process.env.VUE_APP_API_KEY,
+  authDomain: process.env.VUE_APP_AUTH_DOMAIN,
+  databaseURL: process.env.VUE_APP_DATABASE_URL,
+  projectId: process.env.VUE_APP_PROJECT_ID,
+  storageBucket: process.env.VUE_APP_STORAGE_BUCKET,
+};
 
 firebase.initializeApp(firebaseConfig);
-export const db = firebase.firestore()
-export const auth = firebase.auth()
+export const db = firebase.firestore();
+export const auth = firebase.auth();
 
 new Vue({
-  vuetify : new Vuetify(),
+  vuetify: new Vuetify(),
   router,
   store,
   render: h => h(App),
