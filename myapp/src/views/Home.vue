@@ -1,57 +1,47 @@
 <template>
-  <v-content>
-    <v-carousel cycle height="400" hide-delimiter-background show-arrows-on-hover></v-carousel>
-    <v-layout text-xs-center mt-5 px-3 row wrap>
-      <v-flex lg4 sm6 xs12 v-for="map in maps" text-xs-center :key="map.id">
+  <v-content id="container-full">
+    <v-row class="text-center">
+      <v-col
+        v-for="map in maps"
+        text-xs-center
+        :key="map.id"
+        cols="12"
+        sm="10"
+        md="6"
+        lg="4"
+        xl="3"
+        class="border text-center"
+      >
         <v-card class="ma-2" max-width="500px" center @click="getData(map);">
+          <v-img :src="map.downloadURL" height="300px"></v-img>
           <v-card-title aliign-center class="title headline">{{ map.name }}</v-card-title>
           <v-card-text>{{ map.comment }}</v-card-text>
           <v-divider class="mx-3"></v-divider>
           <v-card-subtitle>{{ map.moment }}</v-card-subtitle>
         </v-card>
-      </v-flex>
-      <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
-        <img :src="image" height="100%" width="100%" />
-      </v-dialog>
-    </v-layout>
+        <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
+          <img :src="map.downloadURL" height="100%" width="100%" />
+        </v-dialog>
+      </v-col>
+    </v-row>
   </v-content>
 </template>
 
 <script>
 import firebase from "firebase";
-import { db } from "../main";
+import { getAllData } from "@/plugins/auth";
 
 export default {
   data() {
     return {
-      image: null,
-      name: null,
-      comment: null,
-      moment: null,
       dialog: false,
-      id: [],
-      maps: [],
-      items: ["src1", "brain", "Hobby1"],
-      slides: ["Technology", "Mind Map", "Hobby & Private"]
+      maps: null
     };
   },
-  created() {
-    {
-      var buff = [];
-      db.collection("comments")
-        .get()
-        .then(function(querySnapshot) {
-          querySnapshot.forEach(doc => {
-            console.log(doc.id, " => ", doc.data());
-            var data = doc.data();
-            data["id"] = doc.id;
-            buff.push(data);
-          });
-        })
-        .then(() => {
-          this.maps = buff;
-        });
-    }
+  mounted: async function() {
+    this.maps = await getAllData().then(res => {
+      return res;
+    });
   },
   methods: {
     getData: function(map) {

@@ -1,17 +1,15 @@
 <template>
   <v-app id="app">
-    <Mainbar />
-    <v-main>
-      <router-view />
-    </v-main>
+    <MainBar />
+    <router-view />
   </v-app>
 </template>
 
 <script>
-import Mainbar from "./components/Mainbar";
+import MainBar from "@/components/Mainbar";
 
 export default {
-  components: { Mainbar },
+  components: { MainBar },
   data() {
     return {
       displayName: null,

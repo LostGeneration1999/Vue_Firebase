@@ -7,6 +7,7 @@ import firebase from 'firebase'
 import 'vuetify/dist/vuetify.min.css'
 import 'material-design-icons-iconfont/dist/material-design-icons.css'
 
+export default new Vuetify({})
 Vue.use(Vuetify, { iconfont: 'md', });
 Vue.config.productionTip = false;
 
@@ -21,6 +22,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 export const db = firebase.firestore();
 export const auth = firebase.auth();
+export const storage = firebase.storage();
 
 new Vue({
   vuetify: new Vuetify(),
