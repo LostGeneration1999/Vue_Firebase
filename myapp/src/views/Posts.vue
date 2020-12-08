@@ -27,8 +27,9 @@
 </template>
 
 <script>
-import { uploadImage } from "@/plugins/auth";
+import { uploadImage, postData } from "@/plugins/auth";
 import moment from "moment";
+import router from "@/router";
 
 export default {
   data() {
@@ -75,7 +76,9 @@ export default {
             .substring(2);
         this.data.date = moment().format("YYYY-MM-DD");
         // Blobファイルでない例外処理
-        uploadImage(this.imageFile, this.data.ID).then(console.log("画像格納"));
+        uploadImage(this.imageFile, this.data.ID)
+          .then(postData(this.data))
+          .then(router.push("/"));
       }
     },
     onImagePicked(file) {

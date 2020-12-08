@@ -7,9 +7,7 @@ export async function getAllData() {
     });
     snapshot.forEach(doc => {
         async function download() {
-            let getData = await downloadImage(doc.data()).then(res => {
-                return res
-            })
+            let getData = await downloadImage(doc.data())
             buffData.push(getData);
         }
         download();
@@ -18,7 +16,7 @@ export async function getAllData() {
 }
 
 export async function downloadImage(getData) {
-    const imageURL = await storage.ref().child(getData.imageURl).getDownloadURL().catch(() => {
+    const imageURL = await storage.ref().child(getData.ID).getDownloadURL().catch(() => {
         alert("エラーが発生されました：画像取得時");
     });
     getData["downloadURL"] = imageURL;
@@ -26,14 +24,14 @@ export async function downloadImage(getData) {
 }
 
 export function postData(data) {
-    db.collection("comments").set({
-        items: data['ID'],
+    db.collection("comments").add({
+        ID: data['ID'],
         title: data['title'],
         comment: data['comment'],
         // dateに変更
-        moment: data['date'],
-        imageURl: data['image'],
-        user: data['user']
+        date: data['date'],
+        userID: data['userID'],
+        displayName: data['displayName']
     }).catch(() => {
         alert('エラーが発生しました：データ送信時');
     })

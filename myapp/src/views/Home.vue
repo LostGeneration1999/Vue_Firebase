@@ -12,7 +12,7 @@
         xl="3"
         class="border text-center"
       >
-        <v-card class="ma-2" max-width="500px" center @click="getData(map);">
+        <v-card class="ma-2" max-width="500px" center @click="expansion(map.downloadURL)">
           <v-img :src="map.downloadURL" height="300px"></v-img>
           <v-card-title aliign-center class="title headline">{{ map.name }}</v-card-title>
           <v-card-text>{{ map.comment }}</v-card-text>
@@ -20,7 +20,7 @@
           <v-card-subtitle>{{ map.moment }}</v-card-subtitle>
         </v-card>
         <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
-          <img :src="map.downloadURL" height="100%" width="100%" />
+          <img :src="expansion_file" height="60%" width="60%" />
         </v-dialog>
       </v-col>
     </v-row>
@@ -28,13 +28,13 @@
 </template>
 
 <script>
-import firebase from "firebase";
 import { getAllData } from "@/plugins/auth";
 
 export default {
   data() {
     return {
       dialog: false,
+      expansion_file: null,
       maps: null
     };
   },
@@ -44,26 +44,14 @@ export default {
     });
   },
   methods: {
-    getData: function(map) {
-      (this.image = null), (this.name = map.name);
-      this.theme = map.theme;
-      this.number = map.number;
-      this.comment = map.comment;
-      this.moment = map.moment;
-      const spaceRef = firebase
-        .storage()
-        .ref()
-        .child(map.imageURl);
-      spaceRef.getDownloadURL().then(url => {
-        this.image = url;
+    expansion: function(imagefile) {
+      if (this.dialog == false) {
+        this.expansion_file = imagefile;
         this.dialog = true;
-      });
-    },
-    toUsers() {
-      this.$router.push({
-        name: "users-id-profile",
-        params: { id: this.$store.userUID }
-      });
+      } else {
+        this.expansion_file = null;
+        this.dialog = true;
+      }
     }
   }
 };
