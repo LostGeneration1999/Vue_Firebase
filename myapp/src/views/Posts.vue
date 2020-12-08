@@ -1,100 +1,104 @@
 <template>
-    <v-app>
-         <v-card width='90%' class="mx-auto mt-5">
-            <v-card-title>
-                <h2 class='display-1 item--center'>Post</h2>
-            </v-card-title>
-            <v-card-text>
-            <v-form>
-                <v-select   :items="items"
-                            v-model='theme'
-                            label="投稿のテーマを選んでください"
-                            ></v-select>
-                <v-text-field id='title'
-                              label='タイトル'
-                              v-model='title'
-                              type='text'/>     
-                <v-textarea id='comment'
-                              label='投稿の詳細'
-                              v-model='comment'/>
-            <input type="file" name="image"  @change="selectFile">
-            </v-form>
-            </v-card-text>
-            <v-card-actions>
-                <v-btn class='info item--center' @click='createMap'>投稿</v-btn>
-            </v-card-actions>
-        </v-card>
-    </v-app>
+  <v-content>
+    <v-card width="90%" class="mx-auto mt-5">
+      <v-card-title>
+        <h2 class="display-1 item--center">Post</h2>
+      </v-card-title>
+      <v-card-text>
+        <v-form>
+          <v-text-field label="タイトル" v-model="data.title" type="text" />
+          <v-textarea label="投稿の詳細" v-model="data.comment" />
+          <img v-if="uploadImageUrl" height="300px" :src="this.uploadImageUrl" />
+          <v-file-input
+            v-model="imageFile"
+            accept="image/*"
+            show-size
+            label="画像ファイルをアップロードしてください"
+            prepend-icon="mdi-image"
+            @change="onImagePicked"
+          ></v-file-input>
+        </v-form>
+      </v-card-text>
+      <v-card-actions>
+        <v-btn class="info item--center" @click="createMap">投稿</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-content>
 </template>
 
 <script>
-import { db } from '../main'
-import moment from  'moment'
-
+import { uploadImage } from "@/plugins/auth";
+import moment from "moment";
 
 export default {
-    data(){
-        return{
-            items: ['Product', 'MindMap', 'Hobby'],
-            displayName: null,
-            userUID: null,
-            theme: null,
-            number: null,
-            email: null,
-            title: null,
-            comment: null,
-            moment: null,
-            imageURL: null,
-            maps: {},
-        }
+  data() {
+    return {
+      imageFile: null,
+      uploadImageUrl: null,
+      data: {
+        ID: null,
+        displayName: null,
+        userID: null,
+        title: null,
+        comment: null,
+        date: null
+      }
+    };
+  },
+  computed: {
+    idToken: function() {
+      return this.$store.getters.idToken;
     },
-    computed: {
-        idToken: function() {
-            return this.$store.getters.idToken;
-            },
-        getUser: function() {
-            return this.$store.getters.displayName;
-            }
-        },
-    methods: {
-        selectFile(e){
-            this.$store.dispatch('selectFile',e)
-            
-        },
-        createMap () {
-            this.$store.dispatch('upload')
-            this.moment = moment().format('YYYY-MM-DD')
-            var num = Math.ceil(Math.random()*4);
-            db.collection('comments').add({
-                name: this.title,
-                comment: this.comment,
-                theme: this.theme,
-                number: num,
-                user: this.email,
-                uid: this.userUID,
-                moment: this.moment,
-                imageURl: this.$store.getters.imageURL
-            })
-            .then(function (docRef){
-                console.log(this);
-                console.log("Document written with ID: ", docRef.id);
-                this.$store.dispatch('initialize');
-                
-            })
-            .catch(function (error) {
-                console.log("error", error);
-            })
+    getUser: function() {
+      return this.$store.getters.displayName;
+    },
+    getUID: function() {
+      return this.$store.getters.userID;
+    }
+  },
+  methods: {
+    selectFile(e) {
+      this.$store.dispatch("selectFile", e);
+    },
+    createMap() {
+      if (
+        this.data.title != null ||
+        this.data.imageFile != null ||
+        this.data.userID != null
+      ) {
+        this.data.userID = this.getUID;
+        this.data.displayName = this.getUser;
+        this.data.ID =
+          this.data.userID +
+          Math.random()
+            .toString(32)
+            .substring(2);
+        this.data.date = moment().format("YYYY-MM-DD");
+        // Blobファイルでない例外処理
+        uploadImage(this.imageFile, this.data.ID).then(console.log("画像格納"));
+      }
+    },
+    onImagePicked(file) {
+      if (file !== undefined && file !== null) {
+        if (file.name.lastIndexOf(".") <= 0) {
+          return;
         }
-    } 
-}
-
-
+        const fr = new FileReader();
+        fr.readAsDataURL(file);
+        fr.addEventListener("load", () => {
+          this.uploadImageUrl = fr.result;
+        });
+      } else {
+        this.uploadImageUrl = "";
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
-
 .item--center {
-    margin-left: auto;
-    margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
 }
 </style>

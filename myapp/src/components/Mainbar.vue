@@ -11,20 +11,22 @@
       scroll-target="#scrolling-techniques-5"
       scroll-threshold="500"
     >
-      <v-toolbar-title class="title">Your Map</v-toolbar-title>
-      <template v-if="isAuthenticated==null" v-slot:extension>
+      <v-toolbar-title v-if="isAuthenticated" class="title">ようこそ、{{showName}}さん</v-toolbar-title>
+      <v-toolbar-title v-if="!isAuthenticated" class="title">ようこそ、ゲストさん</v-toolbar-title>
+      <template v-if="!isAuthenticated" v-slot:extension>
         <v-tabs align-with-title>
-          <v-tab to="/login" class="header-item">ログイン</v-tab>
-          <v-tab to="/register" class="header-item">登録</v-tab>
+          <v-tab to="/" class="header-item">HOME</v-tab>
+          <v-tab to="/login" class="header-item">SignIN</v-tab>
+          <v-tab to="/register" class="header-item">SignUP</v-tab>
         </v-tabs>
       </template>
-      <!-- 
-      <template v-if="isAuthenticated" v-slot:extension>
+      <template v-else v-slot:extension>
         <v-tabs align-with-title>
-          <v-tab to="/" class="header-item" @click="logout()">ログアウト</v-tab>
+          <v-tab to="/" class="header-item">HOME</v-tab>
+          <v-tab to="/" class="header-item" @click="logout()">SignOUT</v-tab>
           <v-tab to="/posts" class="header-item">投稿</v-tab>
         </v-tabs>
-      </template>-->
+      </template>
     </v-app-bar>
   </header>
 </template>
@@ -34,6 +36,9 @@ export default {
   computed: {
     isAuthenticated() {
       return this.$store.getters.idToken !== null;
+    },
+    showName() {
+      return this.$store.getters.displayName;
     }
   },
   methods: {

@@ -1,16 +1,17 @@
-import router from '../router'
+import router from '@/router'
 import firebase from 'firebase'
-import { auth } from '../main'
+import { auth } from '@/main'
 
 const state = {
     idToken: null,
     displayName: null,
-    userUID: null,
+    userID: null,
 }
 
 const getters = {
     idToken: state => state.idToken,
-    displayName: state => state.displayName
+    displayName: state => state.displayName,
+    userID: state => state.userID
 }
 
 const mutations = {
@@ -19,7 +20,7 @@ const mutations = {
     },
     getUserData(state) {
         state.displayName = auth.currentUser.displayName;
-        state.userUID = auth.currentUser.uid;
+        state.userID = auth.currentUser.uid;
     }
 }
 
