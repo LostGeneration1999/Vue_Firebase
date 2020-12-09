@@ -21,6 +21,10 @@ const mutations = {
     getUserData(state) {
         state.displayName = auth.currentUser.displayName;
         state.userID = auth.currentUser.uid;
+    },
+    getUserLogout(state) {
+        state.displayName = null;
+        state.userID = null;
     }
 }
 
@@ -31,6 +35,9 @@ const actions = {
             commit('getUserData');
             commit('updateIdToken', response.user.getIdToken().toString());
             router.push('/');
+        }).catch(() => {
+            alert('サインインに失敗しました');
+            router.push('/login');
         })
     },
     register({ commit }, authData) {
@@ -43,13 +50,17 @@ const actions = {
         }).then(() => {
             commit('getUserData');
             router.push('/');
+        }).catch(() => {
+            alert('サインアップに失敗しました');
+            router.push('/register');
         })
     },
     logout({ commit }) {
         firebase.auth().signOut(
         ).then(function () {
+            commit('getUserLogout');
             commit('updateIdToken', null);
-            router.push('/');
+            router.go('/');
         })
     }
 }

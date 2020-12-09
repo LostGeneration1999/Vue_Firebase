@@ -58,15 +58,8 @@ export default {
     }
   },
   methods: {
-    selectFile(e) {
-      this.$store.dispatch("selectFile", e);
-    },
     createMap() {
-      if (
-        this.data.title != null ||
-        this.data.imageFile != null ||
-        this.data.userID != null
-      ) {
+      if (this.data.title != null && this.imageFile != null) {
         this.data.userID = this.getUID;
         this.data.displayName = this.getUser;
         this.data.ID =
@@ -77,8 +70,17 @@ export default {
         this.data.date = moment().format("YYYY-MM-DD");
         // Blobファイルでない例外処理
         uploadImage(this.imageFile, this.data.ID)
-          .then(postData(this.data))
-          .then(router.push("/"));
+          .then(() => {
+            postData(this.data);
+          })
+          .then(() => {
+            router.push("/");
+          })
+          .catch(() => {
+            alert("投稿に失敗しました");
+          });
+      } else {
+        alert("画像・タイトルを含んで送信してください");
       }
     },
     onImagePicked(file) {

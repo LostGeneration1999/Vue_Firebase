@@ -1,8 +1,15 @@
 <template>
   <v-content id="container-full">
+    <v-layout xs12 mt-3 px-10 py-3 wrap row justify-center class="text-xs-center" color="primary">
+      <v-form color="primary">
+        <v-text-field v-model="searchWord" placeholder="1ワードまで" label="検索ワード" type="text" />
+        <v-text-field v-model="searchUser" placeholder="1ユーザーまで" label="検索ユーザー" type="text" />
+        <v-btn @click="search" color="primary">検索</v-btn>
+      </v-form>
+    </v-layout>
     <v-row class="text-center">
       <v-col
-        v-for="map in maps"
+        v-for="map in maps_data"
         text-xs-center
         :key="map.id"
         cols="12"
@@ -14,10 +21,12 @@
       >
         <v-card class="ma-2" max-width="500px" center @click="expansion(map.downloadURL)">
           <v-img :src="map.downloadURL" height="300px"></v-img>
-          <v-card-title aliign-center class="title headline">{{ map.name }}</v-card-title>
+          <v-card-title aliign-center class="title headline">{{ map.title }}</v-card-title>
           <v-card-text>{{ map.comment }}</v-card-text>
           <v-divider class="mx-3"></v-divider>
-          <v-card-subtitle>{{ map.moment }}</v-card-subtitle>
+          <v-card-subtitle>{{ map.date }}</v-card-subtitle>
+          <v-card-subtitle>{{ map.displayName }}さんの投稿</v-card-subtitle>
+          <v-btn @click="deleteMap(map.ID)" v-if="map.userID==loginUser">削除</v-btn>
         </v-card>
         <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
           <img :src="expansion_file" height="60%" width="60%" />
@@ -28,20 +37,32 @@
 </template>
 
 <script>
-import { getAllData } from "@/plugins/auth";
+import { getAllData, getSearchData } from "@/plugins/auth";
 
 export default {
   data() {
     return {
+      searchWord: null,
+      searchUser: null,
+      loginUser: null,
       dialog: false,
       expansion_file: null,
-      maps: null
+      // methodsボタンを押して取得したデータ
+      maps_data: null
     };
   },
   mounted: async function() {
-    this.maps = await getAllData().then(res => {
+    this.loginUser = this.$store.getters.userID;
+    this.maps_data = await getAllData().then(res => {
       return res;
     });
+    this.maps = this.maps_data;
+  },
+  watch: {
+    maps_data: async function() {
+      this.searchWord = null;
+      this.searchUser = null;
+    }
   },
   methods: {
     expansion: function(imagefile) {
@@ -51,6 +72,32 @@ export default {
       } else {
         this.expansion_file = null;
         this.dialog = true;
+      }
+    },
+    deleteMap: function(ID) {
+      alert(ID + "の投稿を削除します");
+    },
+    search: async function() {
+      if (this.searchWord != null || this.searchUser != null) {
+        alert(
+          "ワード: 「" +
+            this.searchWord +
+            "」| ユーザー: 「" +
+            this.searchUser +
+            "」で検索します"
+        );
+        this.maps_data = await getSearchData(
+          this.searchWord,
+          this.searchUser
+        ).then(res => {
+          return res;
+        });
+      } else {
+        console.log("全検索");
+        this.maps_data = await getAllData().then(res => {
+          return res;
+        });
+        this.maps = this.maps_data;
       }
     }
   }

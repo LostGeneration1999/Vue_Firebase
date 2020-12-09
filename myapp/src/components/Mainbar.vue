@@ -13,6 +13,7 @@
     >
       <v-toolbar-title v-if="isAuthenticated" class="title">ようこそ、{{showName}}さん</v-toolbar-title>
       <v-toolbar-title v-if="!isAuthenticated" class="title">ようこそ、ゲストさん</v-toolbar-title>
+
       <template v-if="!isAuthenticated" v-slot:extension>
         <v-tabs align-with-title>
           <v-tab to="/" class="header-item">HOME</v-tab>

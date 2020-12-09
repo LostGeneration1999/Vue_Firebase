@@ -16,7 +16,7 @@
           <v-text-field
             prepend-icon="mdi-account-circle"
             id="email"
-            label="E-mail"
+            label="メールアドレス"
             v-model="email"
             type="email"
           />
