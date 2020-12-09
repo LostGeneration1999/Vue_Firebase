@@ -2,16 +2,26 @@ import { db, storage } from "@/main";
 
 export async function getAllData() {
     let buffData = [];
-    const snapshot = await db.collection("comments").orderBy('title').limit(10).get().catch(() => {
+    const snapshot = await db.collection("comments").orderBy('createdAt', 'desc').limit(3).get().catch(() => {
         alert("エラーが発見されました：データ取得時");
     });
-    snapshot.forEach(doc => {
-        async function download() {
-            let getData = await downloadImage(doc.data());
-            buffData.push(getData);
-        }
-        download();
-    })
+    if (snapshot) {
+        snapshot.forEach(doc => {
+            let data = doc.data();
+            var d = data.createdAt.toDate();
+            var year = d.getFullYear();
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
+            var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
+            data.createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分'
+            async function download() {
+                let getData = await downloadImage(data);
+                buffData.push(getData);
+            }
+            download();
+        })
+    }
     return buffData;
 }
 
@@ -19,7 +29,7 @@ export async function getSearchData(searchWord, searchUser) {
     let buffData = [];
     let snapshot = null;
     if (searchWord != null && searchUser == null) {
-        let searchList = db.collection("comments").where('title', '==', searchWord).limit(4);
+        let searchList = db.collection("comments").where('title', '==', searchWord).limit(3);
         snapshot = await searchList.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
@@ -34,26 +44,36 @@ export async function getSearchData(searchWord, searchUser) {
         // }
     }
     else if (searchUser != null && searchWord == null) {
-        let searchList = db.collection("comments").where('displayName', '==', searchUser).limit(4);
+        let searchList = db.collection("comments").where('displayName', '==', searchUser).limit(3);
         snapshot = await searchList.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
     }
     else if (searchUser != null && searchWord != null) {
-        let searchList = db.collection("comments").where('displayName', '==', searchUser).where('title', '==', searchWord).limit(4);
+        let searchList = db.collection("comments").where('displayName', '==', searchUser).where('title', '==', searchWord).limit(3);
         snapshot = await searchList.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
     }
 
-    snapshot.forEach(doc => { console.log(doc.data()) });
-    snapshot.forEach(doc => {
-        async function download() {
-            let getData = await downloadImage(doc.data())
-            buffData.push(getData);
-        }
-        download();
-    })
+    // snapshot.forEach(doc => { console.log(doc.data()) });
+    if (snapshot) {
+        snapshot.forEach(doc => {
+            let data = doc.data();
+            var d = data.createdAt.toDate();
+            var year = d.getFullYear();
+            var month = d.getMonth() + 1;
+            var day = d.getDate();
+            var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
+            var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
+            data.createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分'
+            async function download() {
+                let getData = await downloadImage(data);
+                buffData.push(getData);
+            }
+            download();
+        })
+    }
     return buffData;
 }
 
@@ -70,7 +90,7 @@ export function postData(data) {
         ID: data['ID'],
         title: data['title'],
         comment: data['comment'],
-        date: data['date'],
+        createdAt: data['createdAt'],
         userID: data['userID'],
         displayName: data['displayName']
     }).then(() => {

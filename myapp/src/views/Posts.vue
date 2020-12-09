@@ -30,6 +30,7 @@
 import { uploadImage, postData } from "@/plugins/auth";
 import moment from "moment";
 import router from "@/router";
+import firebase from "firebase";
 
 export default {
   data() {
@@ -42,7 +43,7 @@ export default {
         userID: null,
         title: null,
         comment: null,
-        date: null
+        createdAt: null
       }
     };
   },
@@ -67,7 +68,9 @@ export default {
           Math.random()
             .toString(32)
             .substring(2);
-        this.data.date = moment().format("YYYY-MM-DD");
+        this.data.createdAt = firebase.firestore.Timestamp.fromDate(
+          new Date(moment().format("YYYY-MM-DD HH:mm:ss"))
+        );
         // Blobファイルでない例外処理
         uploadImage(this.imageFile, this.data.ID)
           .then(() => {

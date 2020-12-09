@@ -2,7 +2,7 @@
   <v-content id="container-full">
     <v-layout xs12 mt-3 px-10 py-3 wrap row justify-center class="text-xs-center" color="primary">
       <v-form color="primary">
-        <v-text-field v-model="searchWord" placeholder="1ワードまで" label="検索ワード" type="text" />
+        <v-text-field v-model="searchWord" placeholder="1ワードまで" label="検索ワード(タイトル名)" type="text" />
         <v-text-field v-model="searchUser" placeholder="1ユーザーまで" label="検索ユーザー" type="text" />
         <v-btn @click="search" color="primary">検索</v-btn>
       </v-form>
@@ -24,7 +24,7 @@
           <v-card-title aliign-center class="title headline">{{ map.title }}</v-card-title>
           <v-card-text>{{ map.comment }}</v-card-text>
           <v-divider class="mx-3"></v-divider>
-          <v-card-subtitle>{{ map.date }}</v-card-subtitle>
+          <v-card-subtitle>{{ map.createdAt }}</v-card-subtitle>
           <v-card-subtitle>{{ map.displayName }}さんの投稿</v-card-subtitle>
           <v-btn @click="deleteMap(map.ID)" v-if="map.userID==loginUser">削除</v-btn>
         </v-card>
@@ -93,7 +93,6 @@ export default {
           return res;
         });
       } else {
-        console.log("全検索");
         this.maps_data = await getAllData().then(res => {
           return res;
         });
