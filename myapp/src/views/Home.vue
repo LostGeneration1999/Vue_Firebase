@@ -32,6 +32,7 @@
           <img :src="expansion_file" height="60%" width="60%" />
         </v-dialog>
       </v-col>
+      <v-btn wrap row justify-center v-if="pagingToken" @click="nextPaging();" color="primary">次のページ</v-btn>
     </v-row>
   </v-content>
 </template>
@@ -42,21 +43,22 @@ import { getAllData, getSearchData } from "@/plugins/auth";
 export default {
   data() {
     return {
+      pagingToken: "",
       searchWord: null,
       searchUser: null,
       loginUser: null,
       dialog: false,
       expansion_file: null,
-      // methodsボタンを押して取得したデータ
       maps_data: null
     };
   },
   mounted: async function() {
     this.loginUser = this.$store.getters.userID;
-    this.maps_data = await getAllData().then(res => {
+    let data = await getAllData(3, this.pagingToken).then(res => {
       return res;
     });
-    this.maps = this.maps_data;
+    this.maps_data = data["BuffData"];
+    this.pagingToken = data["nextPageToken"];
   },
   watch: {
     maps_data: async function() {
@@ -65,6 +67,13 @@ export default {
     }
   },
   methods: {
+    nextPaging: async function() {
+      let data = await getAllData(3, this.pagingToken).then(res => {
+        return res;
+      });
+      this.maps_data = data["BuffData"];
+      this.pagingToken = data["nextPageToken"];
+    },
     expansion: function(imagefile) {
       if (this.dialog == false) {
         this.expansion_file = imagefile;
@@ -87,16 +96,19 @@ export default {
             "」で検索します"
         );
         this.maps_data = await getSearchData(
+          3,
           this.searchWord,
           this.searchUser
         ).then(res => {
           return res;
         });
       } else {
-        this.maps_data = await getAllData().then(res => {
+        this.pagingToken = "";
+        let data = await getAllData(3, this.pagingToken).then(res => {
           return res;
         });
-        this.maps = this.maps_data;
+        this.maps_data = data["BuffData"];
+        this.pagingToken = data["nextPageToken"];
       }
     }
   }

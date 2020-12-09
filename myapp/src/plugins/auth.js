@@ -1,8 +1,16 @@
 import { db, storage } from "@/main";
+import firebase from "firebase";
 
-export async function getAllData() {
+export async function getAllData(limit, pagingToken) {
     let buffData = [];
-    const snapshot = await db.collection("comments").orderBy('createdAt', 'desc').limit(3).get().catch(() => {
+    let nextToken = "";
+    let query = db.collection("comments").orderBy('createdAt', 'desc').limit(limit);
+    if (pagingToken != "") {
+        const [seconds, nanoseconds] = pagingToken.split(':');
+        const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
+        query = query.startAfter(timestamp);
+    }
+    const snapshot = await query.get().catch(() => {
         alert("エラーが発見されました：データ取得時");
     });
     if (snapshot) {
@@ -21,15 +29,21 @@ export async function getAllData() {
             }
             download();
         })
+        if (snapshot.docs.length >= limit) {
+            const last = snapshot.docs[snapshot.docs.length - 1];
+            const lastData = last.data();
+            const time = lastData.createdAt;
+            nextToken = `${time.seconds}:${time.nanoseconds}`;
+        }
     }
-    return buffData;
+    return { "BuffData": buffData, "nextPageToken": nextToken };
 }
 
-export async function getSearchData(searchWord, searchUser) {
+export async function getSearchData(limit, searchWord, searchUser) {
     let buffData = [];
     let snapshot = null;
     if (searchWord != null && searchUser == null) {
-        let searchList = db.collection("comments").where('title', '==', searchWord).limit(3);
+        let searchList = db.collection("comments").where('title', '==', searchWord).limit(limit);
         snapshot = await searchList.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
@@ -56,7 +70,6 @@ export async function getSearchData(searchWord, searchUser) {
         });
     }
 
-    // snapshot.forEach(doc => { console.log(doc.data()) });
     if (snapshot) {
         snapshot.forEach(doc => {
             let data = doc.data();
