@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { getAllData, getSearchData } from "@/plugins/auth";
+import { getAllData, getSearchData, downloadImageToBox } from "@/plugins/auth";
 
 export default {
   data() {
@@ -54,11 +54,10 @@ export default {
   },
   mounted: async function() {
     this.loginUser = this.$store.getters.userID;
-    let data = await getAllData(3, this.pagingToken).then(res => {
-      return res;
-    });
-    this.maps_data = data["BuffData"];
-    this.pagingToken = data["nextPageToken"];
+    let data = await getAllData(3, this.pagingToken);
+    const buffData = await downloadImageToBox(data.BuffData);
+    this.maps_data = buffData;
+    this.pagingToken = data.nextPageToken;
   },
   watch: {
     maps_data: async function() {
@@ -68,11 +67,10 @@ export default {
   },
   methods: {
     nextPaging: async function() {
-      let data = await getAllData(3, this.pagingToken).then(res => {
-        return res;
-      });
-      this.maps_data = data["BuffData"];
-      this.pagingToken = data["nextPageToken"];
+      let data = await getAllData(3, this.pagingToken);
+      let buffData = await downloadImageToBox(data.BuffData);
+      this.maps_data = this.maps_data.concat(buffData);
+      this.pagingToken = data.nextPageToken;
     },
     expansion: function(imagefile) {
       if (this.dialog == false) {
@@ -104,11 +102,11 @@ export default {
         });
       } else {
         this.pagingToken = "";
-        let data = await getAllData(3, this.pagingToken).then(res => {
-          return res;
-        });
-        this.maps_data = data["BuffData"];
-        this.pagingToken = data["nextPageToken"];
+        this.loginUser = this.$store.getters.userID;
+        let data = await getAllData(3, this.pagingToken);
+        let buffData = await downloadImageToBox(data.BuffData);
+        this.maps_data = buffData;
+        this.pagingToken = data.nextPageToken;
       }
     }
   }

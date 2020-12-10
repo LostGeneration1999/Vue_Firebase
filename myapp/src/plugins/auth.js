@@ -2,7 +2,6 @@ import { db, storage } from "@/main";
 import firebase from "firebase";
 
 export async function getAllData(limit, pagingToken) {
-    let buffData = [];
     let nextToken = "";
     let query = db.collection("comments").orderBy('createdAt', 'desc').limit(limit);
     if (pagingToken != "") {
@@ -10,41 +9,39 @@ export async function getAllData(limit, pagingToken) {
         const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
         query = query.startAfter(timestamp);
     }
-    const snapshot = await query.get().catch(() => {
+    const result = await query.get().then((snapshot) => {
+        if (snapshot) {
+            if (snapshot.docs.length >= limit) {
+                const last = snapshot.docs[snapshot.docs.length - 1];
+                const lastData = last.data();
+                const time = lastData.createdAt;
+                nextToken = `${time.seconds}:${time.nanoseconds}`;
+            }
+            return { "BuffData": snapshot, "nextPageToken": nextToken };
+        }
+    }).catch(() => {
         alert("エラーが発見されました：データ取得時");
     });
-    if (snapshot) {
-        snapshot.forEach(doc => {
-            let data = doc.data();
-            var d = data.createdAt.toDate();
-            var year = d.getFullYear();
-            var month = d.getMonth() + 1;
-            var day = d.getDate();
-            var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
-            var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-            data.createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分'
-            async function download() {
-                let getData = await downloadImage(data);
-                buffData.push(getData);
-            }
-            download();
-        })
-        if (snapshot.docs.length >= limit) {
-            const last = snapshot.docs[snapshot.docs.length - 1];
-            const lastData = last.data();
-            const time = lastData.createdAt;
-            nextToken = `${time.seconds}:${time.nanoseconds}`;
-        }
+    return result;
+}
+
+export async function downloadImageToBox(snapshot) {
+    let buffData = [];
+    for (let i = 0, len = snapshot.docs.length; i < len; ++i) {
+        let data = snapshot.docs[i].data();
+        data.createdAt = dateCheck(data.createdAt);
+        let getData = await downloadImage(data);
+        buffData.push(getData);
     }
-    return { "BuffData": buffData, "nextPageToken": nextToken };
+    return buffData
 }
 
 export async function getSearchData(limit, searchWord, searchUser) {
     let buffData = [];
     let snapshot = null;
     if (searchWord != null && searchUser == null) {
-        let searchList = db.collection("comments").where('title', '==', searchWord).limit(limit);
-        snapshot = await searchList.get().catch(() => {
+        let query = db.collection("comments").orderBy('createdAt').where('title', '==', searchWord).limit(limit);
+        snapshot = await query.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
         //複数検索を文字列で分割し、複数検索
@@ -58,14 +55,14 @@ export async function getSearchData(limit, searchWord, searchUser) {
         // }
     }
     else if (searchUser != null && searchWord == null) {
-        let searchList = db.collection("comments").where('displayName', '==', searchUser).limit(3);
-        snapshot = await searchList.get().catch(() => {
+        let query = db.collection("comments").orderBy('createdAt').where('displayName', '==', searchUser).limit(limit);
+        snapshot = await query.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
     }
     else if (searchUser != null && searchWord != null) {
-        let searchList = db.collection("comments").where('displayName', '==', searchUser).where('title', '==', searchWord).limit(3);
-        snapshot = await searchList.get().catch(() => {
+        let query = db.collection("comments").orderBy('createdAt').where('displayName', '==', searchUser).where('title', '==', searchWord).limit(limit);
+        snapshot = await query.get().catch(() => {
             alert("エラーが発見されました：データ取得時");
         });
     }
@@ -73,24 +70,19 @@ export async function getSearchData(limit, searchWord, searchUser) {
     if (snapshot) {
         snapshot.forEach(doc => {
             let data = doc.data();
-            var d = data.createdAt.toDate();
-            var year = d.getFullYear();
-            var month = d.getMonth() + 1;
-            var day = d.getDate();
-            var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
-            var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-            data.createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分'
-            async function download() {
+            data.createdAt = dateCheck(data.createdAt);
+            (async () => {
                 let getData = await downloadImage(data);
                 buffData.push(getData);
-            }
-            download();
+                console.log(buffData.length);
+            })();
+
         })
     }
     return buffData;
 }
 
-export async function downloadImage(getData) {
+async function downloadImage(getData) {
     const imageURL = await storage.ref().child(getData.ID).getDownloadURL().catch(() => {
         alert("一部の画像を取得できませんでした");
     });
@@ -122,3 +114,13 @@ export async function uploadImage(uploadFile, imageURL) {
     })
 }
 
+function dateCheck(createdAt) {
+    var d = createdAt.toDate();
+    var year = d.getFullYear();
+    var month = d.getMonth() + 1;
+    var day = d.getDate();
+    var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
+    var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
+    createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分';
+    return createdAt;
+}
