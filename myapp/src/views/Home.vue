@@ -4,6 +4,7 @@
       <v-form color="primary">
         <v-text-field v-model="searchWord" placeholder="1ワードまで" label="検索ワード(タイトル名)" type="text" />
         <v-text-field v-model="searchUser" placeholder="1ユーザーまで" label="検索ユーザー" type="text" />
+        <p>検索タイトル「{{searchWordInput}}」 検索ユーザー「{{searchUserInput}}」で検索します！！</p>
         <v-btn @click="search" color="primary">検索</v-btn>
       </v-form>
     </v-layout>
@@ -44,8 +45,8 @@ export default {
   data() {
     return {
       pagingToken: "",
-      searchWord: null,
-      searchUser: null,
+      searchWord: "",
+      searchUser: "",
       loginUser: null,
       dialog: false,
       expansion_file: null,
@@ -60,14 +61,29 @@ export default {
     this.pagingToken = data.nextPageToken;
   },
   watch: {
-    maps_data: async function() {
-      this.searchWord = null;
-      this.searchUser = null;
+    maps_data: async function() {}
+  },
+  computed: {
+    searchWordInput: function() {
+      return this.searchWord;
+    },
+    searchUserInput: function() {
+      return this.searchUser;
     }
   },
   methods: {
     nextPaging: async function() {
-      let data = await getAllData(3, this.pagingToken);
+      let data = [];
+      if (this.searchWordInput != "" && this.searchUserInput != "") {
+        data = await getAllData(3, this.pagingToken);
+      } else {
+        data = await getSearchData(
+          3,
+          this.searchWordInput,
+          this.searchUserInput,
+          this.pagingToken
+        );
+      }
       let buffData = await downloadImageToBox(data.BuffData);
       this.maps_data = this.maps_data.concat(buffData);
       this.pagingToken = data.nextPageToken;
@@ -85,21 +101,24 @@ export default {
       alert(ID + "の投稿を削除します");
     },
     search: async function() {
-      if (this.searchWord != null || this.searchUser != null) {
+      this.pagingToken = "";
+      if (this.searchWordInput != "" || this.searchUserInput != "") {
         alert(
           "ワード: 「" +
-            this.searchWord +
+            this.searchWordInput +
             "」| ユーザー: 「" +
-            this.searchUser +
+            this.searchUserInput +
             "」で検索します"
         );
-        this.maps_data = await getSearchData(
+        let data = await getSearchData(
           3,
-          this.searchWord,
-          this.searchUser
-        ).then(res => {
-          return res;
-        });
+          this.searchWordInput,
+          this.searchUserInput,
+          this.pagingToken
+        );
+        let buffData = await downloadImageToBox(data.BuffData);
+        this.maps_data = buffData;
+        this.pagingToken = data.nextPageToken;
       } else {
         this.pagingToken = "";
         this.loginUser = this.$store.getters.userID;

@@ -10,15 +10,13 @@ export async function getAllData(limit, pagingToken) {
         query = query.startAfter(timestamp);
     }
     const result = await query.get().then((snapshot) => {
-        if (snapshot) {
-            if (snapshot.docs.length >= limit) {
-                const last = snapshot.docs[snapshot.docs.length - 1];
-                const lastData = last.data();
-                const time = lastData.createdAt;
-                nextToken = `${time.seconds}:${time.nanoseconds}`;
-            }
-            return { "BuffData": snapshot, "nextPageToken": nextToken };
+        if (snapshot.docs.length >= limit) {
+            const last = snapshot.docs[snapshot.docs.length - 1];
+            const lastData = last.data();
+            const time = lastData.createdAt;
+            nextToken = `${time.seconds}:${time.nanoseconds}`;
         }
+        return { "BuffData": snapshot, "nextPageToken": nextToken };
     }).catch(() => {
         alert("エラーが発見されました：データ取得時");
     });
@@ -36,50 +34,40 @@ export async function downloadImageToBox(snapshot) {
     return buffData
 }
 
-export async function getSearchData(limit, searchWord, searchUser) {
-    let buffData = [];
-    let snapshot = null;
-    if (searchWord != null && searchUser == null) {
-        let query = db.collection("comments").orderBy('createdAt').where('title', '==', searchWord).limit(limit);
-        snapshot = await query.get().catch(() => {
-            alert("エラーが発見されました：データ取得時");
-        });
-        //複数検索を文字列で分割し、複数検索
-        //firestoreではLIKE検索できないっぽいので断念
-        //const wordlist = searchWord.split(/[\x20\u3000]/);
-        //for (let i = 0, len = wordlist.length; i < len; ++i) {
-        // if (wordlist[i].length > 0) {
-        //         console.log(wordlist[i]);
-        //     searchlist.orderBy('title').startAt(wordlist[i]).endAt(wordlist[i] + '\uf8ff');
-        //     }
-        // }
+export async function getSearchData(limit, searchWord, searchUser, pagingToken) {
+    let nextToken = "";
+    let query = db.collection("comments").orderBy('createdAt')
+    if (pagingToken != "") {
+        const [seconds, nanoseconds] = pagingToken.split(':');
+        const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
+        query = query.startAfter(timestamp);
     }
-    else if (searchUser != null && searchWord == null) {
-        let query = db.collection("comments").orderBy('createdAt').where('displayName', '==', searchUser).limit(limit);
-        snapshot = await query.get().catch(() => {
-            alert("エラーが発見されました：データ取得時");
-        });
+    console.log(searchWord);
+    if (searchUser == "" && searchWord != "") {
+        console.log('searchWord');
+        query = query.where('title', '==', searchWord).limit(limit);
     }
-    else if (searchUser != null && searchWord != null) {
-        let query = db.collection("comments").orderBy('createdAt').where('displayName', '==', searchUser).where('title', '==', searchWord).limit(limit);
-        snapshot = await query.get().catch(() => {
-            alert("エラーが発見されました：データ取得時");
-        });
+    else if (searchUser != "" && searchWord == "") {
+        console.log('searchUser');
+        query = query.where('displayName', '==', searchUser).limit(limit);
+    }
+    else if (searchUser != "" && searchWord != "") {
+        query = query.where('displayName', '==', searchUser).where('title', '==', searchWord).limit(limit);
     }
 
-    if (snapshot) {
-        snapshot.forEach(doc => {
-            let data = doc.data();
-            data.createdAt = dateCheck(data.createdAt);
-            (async () => {
-                let getData = await downloadImage(data);
-                buffData.push(getData);
-                console.log(buffData.length);
-            })();
 
-        })
-    }
-    return buffData;
+    const result = await query.get().then((snapshot) => {
+        if (snapshot.docs.length >= limit) {
+            const last = snapshot.docs[snapshot.docs.length - 1];
+            const lastData = last.data();
+            const time = lastData.createdAt;
+            nextToken = `${time.seconds}:${time.nanoseconds}`;
+        }
+        return { "BuffData": snapshot, "nextPageToken": nextToken };
+    }).catch(() => {
+        alert("エラーが発見されました：データ取得時");
+    });
+    return result;
 }
 
 async function downloadImage(getData) {
@@ -91,13 +79,13 @@ async function downloadImage(getData) {
 }
 
 export function postData(data) {
-    return db.collection("comments").doc(data['ID']).set({
-        ID: data['ID'],
-        title: data['title'],
-        comment: data['comment'],
-        createdAt: data['createdAt'],
-        userID: data['userID'],
-        displayName: data['displayName']
+    return db.collection("comments").doc(data.ID).set({
+        ID: data.ID,
+        title: data.title,
+        comment: data.comment,
+        createdAt: data.createdAt,
+        userID: data.userID,
+        displayName: data.displayName,
     }).then(() => {
         console.log('データ送信完了')
     }).catch(() => {
