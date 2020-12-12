@@ -2,7 +2,10 @@
   <v-content>
     <v-card width="90%" class="mx-auto mt-5">
       <v-card-title>
-        <h2 class="display-1 item--center">Sign In</h2>
+        <h4 class="item--center">
+          投稿するには
+          <font color="#00A5BF">ログイン</font>を！
+        </h4>
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -26,7 +29,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="info item--center" @click="login">ログイン</v-btn>
+        <v-btn class="item--center" dark color="#17204d" @click="login">ログイン</v-btn>
       </v-card-actions>
     </v-card>
   </v-content>

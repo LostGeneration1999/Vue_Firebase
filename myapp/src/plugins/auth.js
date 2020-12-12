@@ -42,13 +42,10 @@ export async function getSearchData(limit, searchWord, searchUser, pagingToken) 
         const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
         query = query.startAfter(timestamp);
     }
-    console.log(searchWord);
     if (searchUser == "" && searchWord != "") {
-        console.log('searchWord');
         query = query.where('title', '==', searchWord).limit(limit);
     }
     else if (searchUser != "" && searchWord == "") {
-        console.log('searchUser');
         query = query.where('displayName', '==', searchUser).limit(limit);
     }
     else if (searchUser != "" && searchWord != "") {
@@ -107,8 +104,6 @@ function dateCheck(createdAt) {
     var year = d.getFullYear();
     var month = d.getMonth() + 1;
     var day = d.getDate();
-    var hour = (d.getHours() < 10) ? '0' + d.getHours() : d.getHours();
-    var min = (d.getMinutes() < 10) ? '0' + d.getMinutes() : d.getMinutes();
-    createdAt = year + '年' + month + '月' + day + '日' + hour + '時' + min + '分';
+    createdAt = year + '-' + month + '-' + day;
     return createdAt;
 }

@@ -2,7 +2,9 @@
   <v-content>
     <v-card width="90%" class="mx-auto mt-5">
       <v-card-title>
-        <h2 class="display-1 item--center">Sign Up</h2>
+        <h4 class="item--center">
+          <font color="#00A5BF">Mind View</font>を始めよう！
+        </h4>
       </v-card-title>
       <v-card-text>
         <v-form>
@@ -31,7 +33,7 @@
         </v-form>
       </v-card-text>
       <v-card-actions>
-        <v-btn class="info item--center" @click="register">登録</v-btn>
+        <v-btn dark color="#17204d" class="item--center" @click="register">登録</v-btn>
       </v-card-actions>
     </v-card>
   </v-content>
