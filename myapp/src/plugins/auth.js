@@ -1,5 +1,6 @@
 import { db, storage } from "@/main";
 import firebase from "firebase";
+import router from '@/router'
 
 export async function getAllData(limit, pagingToken) {
     let nextToken = "";
@@ -18,7 +19,7 @@ export async function getAllData(limit, pagingToken) {
         }
         return { "BuffData": snapshot, "nextPageToken": nextToken };
     }).catch(() => {
-        alert("エラーが発見されました：データ取得時");
+        alert("エラーが発生しました");
     });
     return result;
 }
@@ -32,6 +33,23 @@ export async function downloadImageToBox(snapshot) {
         buffData.push(getData);
     }
     return buffData
+}
+
+export async function deleteData(ID) {
+    db.collection("comments").doc(ID).delete().then(() => {
+        deleteImageFile(ID);
+    }).catch(() => {
+        alert('エラーが発生しました');
+    });
+}
+
+function deleteImageFile(ID) {
+    storage.ref().child(ID).delete().then(() => {
+        router.replace('/post');
+        router.replace('/');
+    }).catch(() => {
+        alert('エラーが発生しました');
+    })
 }
 
 export async function getSearchData(limit, searchWord, searchUser, pagingToken) {
@@ -62,14 +80,14 @@ export async function getSearchData(limit, searchWord, searchUser, pagingToken) 
         }
         return { "BuffData": snapshot, "nextPageToken": nextToken };
     }).catch(() => {
-        alert("エラーが発見されました：データ取得時");
+        alert("エラーが発生しました");
     });
     return result;
 }
 
 async function downloadImage(getData) {
     const imageURL = await storage.ref().child(getData.ID).getDownloadURL().catch(() => {
-        alert("一部の画像を取得できませんでした");
+        alert("エラーが発生しました");
     });
     getData["downloadURL"] = imageURL;
     return getData;
@@ -86,7 +104,7 @@ export function postData(data) {
     }).then(() => {
         console.log('データ送信完了')
     }).catch(() => {
-        alert('エラーが発生しました：データ送信時');
+        alert('エラーが発生しました');
     })
 }
 
@@ -95,7 +113,7 @@ export async function uploadImage(uploadFile, imageURL) {
     return storageRef.put(uploadFile).then(() => {
         console.log('画像送信完了')
     }).catch(() => {
-        alert('エラーが発生されました：画像アップロード');
+        alert('エラーが発生しました');
     })
 }
 

@@ -16,16 +16,16 @@
 
       <template v-if="!isAuthenticated" v-slot:extension>
         <v-tabs align-with-title>
-          <v-tab to="/" class="header-item">HOME</v-tab>
           <v-tab to="/login" class="header-item">SignIN</v-tab>
+          <v-tab to="/" class="header-item">HOME</v-tab>
           <v-tab to="/register" class="header-item">SignUP</v-tab>
         </v-tabs>
       </template>
       <template v-else v-slot:extension>
         <v-tabs align-with-title>
+          <v-tab to="/posts" class="header-item">投稿</v-tab>
           <v-tab to="/" class="header-item">HOME</v-tab>
           <v-tab to="/" class="header-item" @click="logout()">SignOUT</v-tab>
-          <v-tab to="/posts" class="header-item">投稿</v-tab>
         </v-tabs>
       </template>
     </v-app-bar>
@@ -44,7 +44,9 @@ export default {
   },
   methods: {
     logout() {
-      this.$store.dispatch("logout");
+      if (confirm("サインアウトしますか？")) {
+        this.$store.dispatch("logout");
+      }
     }
   }
 };

@@ -30,7 +30,7 @@
         xl="3"
         class="border text-center"
       >
-        <v-card class="ma-2" @click="expansion(map.downloadURL, map.comment)">
+        <v-card class="ma-2">
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
               <v-card-title>{{ map.title }}</v-card-title>
@@ -38,10 +38,15 @@
               <v-card-subtitle>{{ map.createdAt }}</v-card-subtitle>
             </div>
             <div>
-              <v-avatar class="ma-3" size="125" tile>
+              <v-avatar
+                class="ma-3"
+                size="125"
+                tile
+                @click="expansion(map.downloadURL, map.comment)"
+              >
                 <v-img :src="map.downloadURL" height="300px"></v-img>
               </v-avatar>
-              <v-btn color="red" text @click="deleteMap(map.ID)" v-if="map.userID==loginUser">削除</v-btn>
+              <v-btn color="red" text @click="deleteMap(map)" v-if="map.userID==loginUser">削除</v-btn>
             </div>
           </div>
         </v-card>
@@ -69,7 +74,12 @@
 </template>
 
 <script>
-import { getAllData, getSearchData, downloadImageToBox } from "@/plugins/auth";
+import {
+  getAllData,
+  getSearchData,
+  downloadImageToBox,
+  deleteData
+} from "@/plugins/auth";
 
 export default {
   data() {
@@ -107,7 +117,7 @@ export default {
   methods: {
     nextPaging: async function() {
       let data = [];
-      if (this.searchWordInput != "" && this.searchUserInput != "") {
+      if (this.searchWordInput == "" && this.searchUserInput == "") {
         data = await getAllData(3, this.pagingToken);
       } else {
         data = await getSearchData(
@@ -135,19 +145,14 @@ export default {
         this.dialog = false;
       }
     },
-    deleteMap: function(ID) {
-      alert(ID + "の投稿を削除します");
+    deleteMap: function(data) {
+      if (confirm(data.title + "の投稿を削除しますか？")) {
+        deleteData(data.ID);
+      }
     },
     search: async function() {
       this.pagingToken = "";
       if (this.searchWordInput != "" || this.searchUserInput != "") {
-        alert(
-          "ワード: 「" +
-            this.searchWordInput +
-            "」| ユーザー: 「" +
-            this.searchUserInput +
-            "」で検索します"
-        );
         let data = await getSearchData(
           3,
           this.searchWordInput,

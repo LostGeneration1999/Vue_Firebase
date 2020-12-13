@@ -10,7 +10,9 @@
         <v-form>
           <v-text-field label="タイトル" v-model="data.title" type="text" />
           <v-textarea label="投稿の詳細" v-model="data.comment" />
-          <img v-if="uploadImageUrl" height="300px" :src="this.uploadImageUrl" />
+          <div align="center">
+            <img v-if="uploadImageUrl" height="170px" :src="this.uploadImageUrl" />
+          </div>
           <v-file-input
             v-model="imageFile"
             accept="image/*"
