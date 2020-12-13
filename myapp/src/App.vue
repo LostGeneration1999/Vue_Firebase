@@ -16,6 +16,9 @@ export default {
       userUID: null
     };
   },
+  created() {
+    this.$store.dispatch("onAuth");
+  },
   computed: {
     showName() {
       return this.$store.getters.displayName;

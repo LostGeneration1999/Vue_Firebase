@@ -1,68 +1,52 @@
 import router from '@/router'
 import firebase from 'firebase'
-import { auth } from '@/main'
+// import { auth } from '@/main'
 
 const state = {
-    idToken: null,
-    displayName: null,
-    userID: null,
+    user: {},
+    status: false,
 }
 
 const getters = {
-    idToken: state => state.idToken,
-    displayName: state => state.displayName,
-    userID: state => state.userID
+    user(state) {
+        return state.user;
+    },
+    isSignedIn(state) {
+        return state.status;
+    }
 }
 
 const mutations = {
-    updateIdToken(state, idToken) {
-        state.idToken = idToken;
+    onAuthStateChanged(state, user) {
+        state.user = user;
     },
-    getUserData(state) {
-        state.displayName = auth.currentUser.displayName;
-        state.userID = auth.currentUser.uid;
+    onUserStatusChanged(state, status) {
+        state.status = status;
     },
-    getUserLogout(state) {
-        state.displayName = null;
-        state.userID = null;
-    }
 }
 
 const actions = {
-    login({ commit }, authData) {
-        firebase.auth().signInWithEmailAndPassword(authData.email, authData.password
-        ).then(response => {
-            commit('getUserData');
-            commit('updateIdToken', response.user.getIdToken().toString());
-            router.push('/');
-        }).catch(() => {
-            alert('サインインに失敗しました');
-            router.push('/login');
-        })
-    },
-    register({ commit }, authData) {
-        firebase.auth().createUserWithEmailAndPassword(authData.email, authData.password
-        ).then(response => {
-            commit('updateIdToken', response.user.getIdToken().toString());
-            return response.user.updateProfile({
-                displayName: authData.displayName,
-            })
-        }).then(() => {
-            commit('getUserData');
-            router.push('/');
-        }).catch(() => {
-            alert('サインアップに失敗しました');
-            router.push('/register');
-        })
+    login({ commit }) {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        firebase.auth().signInWithPopup(provider).then(function (result) {
+            commit('onUserStatusChanged', result.user.uid ? true : false);
+            commit('onAuthStateChanged', result.user);
+            router.push('/')
+        }).catch(() => alert('ログインに失敗しました'));
     },
     logout({ commit }) {
-        firebase.auth().signOut(
-        ).then(function () {
-            commit('getUserLogout');
-            commit('updateIdToken', null);
-            router.go('/');
+        firebase.auth().signOut().then(() => {
+            commit('onAuthStateChanged', null);
+            commit('onUserStatusChanged', false);
         })
-    }
+    },
+    onAuth({ commit }) {
+        firebase.auth().onAuthStateChanged(user => {
+            user = user ? user : {};
+            commit('onAuthStateChanged', user);
+            commit('onUserStatusChanged', user.uid ? true : false);
+        });
+    },
 }
 
 export default {

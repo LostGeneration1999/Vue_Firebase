@@ -96,8 +96,8 @@ export default {
     };
   },
   mounted: async function() {
-    this.loginUser = this.$store.getters.userID;
-    this.loginUserName = this.$store.getters.displayName;
+    this.loginUser = this.$store.getters.user.uid;
+    this.loginUserName = this.$store.getters.user.displayName;
     let data = await getAllData(3, this.pagingToken);
     const buffData = await downloadImageToBox(data.BuffData);
     this.maps_data = buffData;

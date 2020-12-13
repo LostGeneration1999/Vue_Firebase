@@ -27,6 +27,7 @@
         <v-btn dark color="#17204d" class="item--center" @click="createMap">投稿</v-btn>
       </v-card-actions>
     </v-card>
+    <loading :active.sync="isLoading" :can-cancel="true" :is-full-page="true"></loading>
   </v-content>
 </template>
 
@@ -35,12 +36,15 @@ import { uploadImage, postData } from "@/plugins/auth";
 import moment from "moment";
 import router from "@/router";
 import firebase from "firebase";
+import Loading from "vue-loading-overlay";
+import "vue-loading-overlay/dist/vue-loading.css";
 
 export default {
   data() {
     return {
       imageFile: null,
       uploadImageUrl: null,
+      isLoading: false,
       data: {
         ID: null,
         displayName: null,
@@ -51,20 +55,21 @@ export default {
       }
     };
   },
+  components: {
+    loading: Loading
+  },
   computed: {
-    idToken: function() {
-      return this.$store.getters.idToken;
-    },
     getUser: function() {
-      return this.$store.getters.displayName;
+      return this.$store.getters.user.displayName;
     },
     getUID: function() {
-      return this.$store.getters.userID;
+      return this.$store.getters.user.uid;
     }
   },
   methods: {
     createMap() {
       if (this.data.title != null && this.imageFile != null) {
+        this.isLoading = true;
         this.data.userID = this.getUID;
         this.data.displayName = this.getUser;
         this.data.ID =
@@ -81,9 +86,11 @@ export default {
             postData(this.data);
           })
           .then(() => {
+            this.isLoading = false;
             router.push("/");
           })
           .catch(() => {
+            this.isLoading = false;
             alert("投稿に失敗しました");
           });
       } else {

@@ -36,10 +36,10 @@
 export default {
   computed: {
     isAuthenticated() {
-      return this.$store.getters.idToken !== null;
+      return this.$store.getters.isSignedIn;
     },
     showName() {
-      return this.$store.getters.displayName;
+      return this.$store.getters.user.displayName;
     }
   },
   methods: {

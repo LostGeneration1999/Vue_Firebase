@@ -45,8 +45,7 @@ export async function deleteData(ID) {
 
 function deleteImageFile(ID) {
     storage.ref().child(ID).delete().then(() => {
-        router.replace('/post');
-        router.replace('/');
+        router.go('/');
     }).catch(() => {
         alert('エラーが発生しました');
     })
@@ -54,7 +53,7 @@ function deleteImageFile(ID) {
 
 export async function getSearchData(limit, searchWord, searchUser, pagingToken) {
     let nextToken = "";
-    let query = db.collection("comments").orderBy('createdAt')
+    let query = db.collection("comments").orderBy('createdAt');
     if (pagingToken != "") {
         const [seconds, nanoseconds] = pagingToken.split(':');
         const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
