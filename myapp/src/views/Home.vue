@@ -56,15 +56,28 @@
         </v-card>
         <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
           <v-card class="ma-2 pa-md-4 mx-lg-auto">
-            <v-img :src="expansion.file" height="60%" width="100%"></v-img>
-            <v-spacer />
-            <v-card-text>{{ expansion.comment }}</v-card-text>
-            <div>
-              <v-chip v-for="tag in expansion.tags" :key="tag" color="#17204d" text-color="yellow">
-                <v-icon left>label</v-icon>
-                {{tag}}
-              </v-chip>
-            </div>
+            <v-card-text>
+              <v-container id="scroll-target" style="max-height: 500px">
+                <v-row v-scroll:#scroll-target="onScroll" align="top">
+                  <v-img :src="expansion.file" height="60%" width="100%"></v-img>
+                </v-row>
+              </v-container>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer />
+              <v-card-text>{{ expansion.comment }}</v-card-text>
+              <div>
+                <v-chip
+                  v-for="tag in expansion.tags"
+                  :key="tag"
+                  color="#17204d"
+                  text-color="yellow"
+                >
+                  <v-icon left>label</v-icon>
+                  {{tag}}
+                </v-chip>
+              </div>
+            </v-card-actions>
           </v-card>
         </v-dialog>
       </v-col>
