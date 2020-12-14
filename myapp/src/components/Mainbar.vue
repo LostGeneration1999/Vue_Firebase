@@ -12,13 +12,13 @@
       scroll-threshold="500"
     >
       <v-toolbar-title v-if="isAuthenticated" class="title">ようこそ！「{{showName}}」さん</v-toolbar-title>
-      <v-toolbar-title v-if="!isAuthenticated" class="title">Mind Viewへ、ようこそ！</v-toolbar-title>
+      <v-toolbar-title v-if="!isAuthenticated" class="title">ようこそ！Mind Viewへ</v-toolbar-title>
 
       <template v-if="!isAuthenticated" v-slot:extension>
         <v-tabs align-with-title>
           <v-tab to="/login" class="header-item">SignIN</v-tab>
           <v-tab to="/" class="header-item">HOME</v-tab>
-          <v-tab to="/register" class="header-item">SignUP</v-tab>
+          <v-tab to="/introduction" class="header-item">Mind View</v-tab>
         </v-tabs>
       </template>
       <template v-else v-slot:extension>

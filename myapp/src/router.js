@@ -6,7 +6,7 @@ import Home from '@/views/Home.vue'
 import store from '@/store.js'
 import Posts from '@/views/Posts.vue'
 import Login from '@/components/Login.vue'
-import Register from '@/components/Register.vue'
+import Introduction from '@/components/Introduction.vue'
 
 Vue.use(Router)
 Vue.use(VueAxios, axios)
@@ -32,8 +32,8 @@ export default new Router({
         }
     },
     {
-        path: '/register',
-        component: Register,
+        path: '/introduction',
+        component: Introduction,
         beforeEnter(to, from, next) {
             if (store.getters.isSignedIn) {
                 next('/');

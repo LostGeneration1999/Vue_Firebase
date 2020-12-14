@@ -38,12 +38,7 @@
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
               <v-card-title>{{ map.title }}</v-card-title>
-              <div class="boxContainer">
-                <v-avatar class="box" color="primary" size="20">
-                  <v-img :src="loginUser.photoURL"></v-img>
-                </v-avatar>
-                <v-card-subtitle class="box">{{ map.displayName }}</v-card-subtitle>
-              </div>
+              <v-card-subtitle class="box">By {{ map.displayName }}</v-card-subtitle>
               <v-card-subtitle>{{ map.createdAt }}</v-card-subtitle>
             </div>
             <div>
@@ -60,7 +55,7 @@
           </div>
         </v-card>
         <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
-          <v-card class="ma-2">
+          <v-card class="ma-2 pa-md-4 mx-lg-auto">
             <v-img :src="expansion.file" height="60%" width="100%"></v-img>
             <v-spacer />
             <v-card-text>{{ expansion.comment }}</v-card-text>
@@ -204,14 +199,5 @@ export default {
   margin-left: auto;
   margin-right: auto;
   color: yellow;
-}
-
-.box {
-  display: inline-block;
-  font-size: 16px;
-}
-
-.boxContainer {
-  font-size: 0;
 }
 </style>

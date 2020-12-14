@@ -8,6 +8,12 @@
       </v-card-title>
       <v-card-text>
         <v-form>
+          <div class="boxContainer">
+            <v-avatar class="box" color="primary" size="20">
+              <v-img :src="loginUser.photoURL"></v-img>
+            </v-avatar>
+            <v-card-subtitle class="box">{{loginUser.displayName }}</v-card-subtitle>
+          </div>
           <v-text-field label="タイトル" v-model="data.title" type="text" />
           <v-textarea label="投稿の詳細" v-model="data.comment" />
           <v-combobox
@@ -56,6 +62,7 @@ export default {
     return {
       imageFile: null,
       uploadImageUrl: null,
+      loginUser: null,
       isLoading: false,
       select: ["就活", "性格", "関心"],
       search: "",
@@ -72,6 +79,9 @@ export default {
   },
   components: {
     loading: Loading
+  },
+  created: async function() {
+    this.loginUser = this.$store.getters.user;
   },
   computed: {
     getUser: function() {
@@ -142,5 +152,14 @@ export default {
 .item--center {
   margin-left: auto;
   margin-right: auto;
+}
+
+.box {
+  display: inline-block;
+  font-size: 16px;
+}
+
+.boxContainer {
+  font-size: 0;
 }
 </style>
