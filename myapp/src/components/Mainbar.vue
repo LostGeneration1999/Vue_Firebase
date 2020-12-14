@@ -11,7 +11,7 @@
       scroll-target="#scrolling-techniques-5"
       scroll-threshold="500"
     >
-      <v-toolbar-title v-if="isAuthenticated" class="title">ようこそ！{{showName}}さん</v-toolbar-title>
+      <v-toolbar-title v-if="isAuthenticated" class="title">ようこそ！「{{showName}}」さん</v-toolbar-title>
       <v-toolbar-title v-if="!isAuthenticated" class="title">Mind Viewへ、ようこそ！</v-toolbar-title>
 
       <template v-if="!isAuthenticated" v-slot:extension>

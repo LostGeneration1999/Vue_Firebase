@@ -59,14 +59,14 @@ export async function getSearchData(limit, searchWord, searchUser, pagingToken) 
         const timestamp = new firebase.firestore.Timestamp(seconds, nanoseconds);
         query = query.startAfter(timestamp);
     }
-    if (searchUser == "" && searchWord != "") {
-        query = query.where('title', '==', searchWord).limit(limit);
+    if (searchUser == "" && searchWord != []) {
+        query = query.where('tags', 'array-contains-any', searchWord).limit(limit);
     }
     else if (searchUser != "" && searchWord == "") {
         query = query.where('displayName', '==', searchUser).limit(limit);
     }
-    else if (searchUser != "" && searchWord != "") {
-        query = query.where('displayName', '==', searchUser).where('title', '==', searchWord).limit(limit);
+    else if (searchUser != "" && searchWord != []) {
+        query = query.where('displayName', '==', searchUser).where('tags', 'array-contains-any', searchWord).limit(limit);
     }
 
 
@@ -78,7 +78,8 @@ export async function getSearchData(limit, searchWord, searchUser, pagingToken) 
             nextToken = `${time.seconds}:${time.nanoseconds}`;
         }
         return { "BuffData": snapshot, "nextPageToken": nextToken };
-    }).catch(() => {
+    }).catch((err) => {
+        console.log(err)
         alert("エラーが発生しました");
     });
     return result;
@@ -97,6 +98,7 @@ export function postData(data) {
         ID: data.ID,
         title: data.title,
         comment: data.comment,
+        tags: data.tags,
         createdAt: data.createdAt,
         userID: data.userID,
         displayName: data.displayName,

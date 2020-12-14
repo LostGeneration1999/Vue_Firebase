@@ -4,12 +4,16 @@
       <v-card width="90%" class="mx-auto mt-5">
         <v-card-text>
           <v-form color="primary">
-            <v-text-field
+            <v-combobox
+              multiple
               v-model="searchWord"
-              placeholder="1ワードまで"
-              label="検索ワード(タイトル名)"
-              type="text"
-            />
+              placeholder="複数-OR検索"
+              label="検索タグ"
+              append-icon
+              chips
+              deletable-chips
+              class="tag-input"
+            ></v-combobox>
             <v-text-field v-model="searchUser" placeholder="1ユーザーまで" label="検索ユーザー" type="text" />
           </v-form>
           <v-card-actions>
@@ -34,7 +38,12 @@
           <div class="d-flex flex-no-wrap justify-space-between">
             <div>
               <v-card-title>{{ map.title }}</v-card-title>
-              <v-card-subtitle>By {{ map.displayName }}</v-card-subtitle>
+              <div class="boxContainer">
+                <v-avatar class="box" color="primary" size="20">
+                  <v-img :src="loginUser.photoURL"></v-img>
+                </v-avatar>
+                <v-card-subtitle class="box">{{ map.displayName }}</v-card-subtitle>
+              </div>
               <v-card-subtitle>{{ map.createdAt }}</v-card-subtitle>
             </div>
             <div>
@@ -42,18 +51,25 @@
                 class="ma-3"
                 size="125"
                 tile
-                @click="expansion(map.downloadURL, map.comment)"
+                @click="expansionData(map.downloadURL, map.comment, map.tags)"
               >
                 <v-img :src="map.downloadURL" height="300px"></v-img>
               </v-avatar>
-              <v-btn color="red" text @click="deleteMap(map)" v-if="map.userID==loginUser">削除</v-btn>
+              <v-btn color="red" text @click="deleteMap(map)" v-if="map.userID==loginUser.uid">削除</v-btn>
             </div>
           </div>
         </v-card>
         <v-dialog v-model="dialog" scrollable max-width="80%" max-height="100%">
           <v-card class="ma-2">
-            <v-img :src="expansion_file" height="60%" width="100%"></v-img>
-            <v-card-text>{{ expansion_text }}</v-card-text>
+            <v-img :src="expansion.file" height="60%" width="100%"></v-img>
+            <v-spacer />
+            <v-card-text>{{ expansion.comment }}</v-card-text>
+            <div>
+              <v-chip v-for="tag in expansion.tags" :key="tag" color="#17204d" text-color="yellow">
+                <v-icon left>label</v-icon>
+                {{tag}}
+              </v-chip>
+            </div>
           </v-card>
         </v-dialog>
       </v-col>
@@ -85,19 +101,20 @@ export default {
   data() {
     return {
       pagingToken: "",
-      searchWord: "",
+      searchWord: [],
       searchUser: "",
       loginUser: null,
-      loginUserName: null,
       dialog: false,
-      expansion_file: null,
-      expansion_text: "",
+      expansion: {
+        file: null,
+        comment: "",
+        tags: null
+      },
       maps_data: null
     };
   },
-  mounted: async function() {
-    this.loginUser = this.$store.getters.user.uid;
-    this.loginUserName = this.$store.getters.user.displayName;
+  created: async function() {
+    this.loginUser = this.$store.getters.user;
     let data = await getAllData(3, this.pagingToken);
     const buffData = await downloadImageToBox(data.BuffData);
     this.maps_data = buffData;
@@ -131,18 +148,15 @@ export default {
       this.maps_data = this.maps_data.concat(buffData);
       this.pagingToken = data.nextPageToken;
     },
-    expansion: function(imagefile, text) {
+    expansionData: function(downloadURL, comment, tags) {
       if (this.dialog == false) {
-        this.expansion_file = imagefile;
-        this.expansion_text = text;
-        if (text == "") {
-          this.expansion_text = "No Comment";
+        this.expansion.file = downloadURL;
+        this.expansion.comment = comment;
+        this.expansion.tags = tags;
+        if (comment == "") {
+          this.expansion.comment = "No Comment";
         }
         this.dialog = true;
-      } else {
-        this.expansion_file = null;
-        this.expansion_text = "";
-        this.dialog = false;
       }
     },
     deleteMap: function(data) {
@@ -152,7 +166,8 @@ export default {
     },
     search: async function() {
       this.pagingToken = "";
-      if (this.searchWordInput != "" || this.searchUserInput != "") {
+      if (this.searchWordInput.length > 0 || this.searchUserInput != "") {
+        console.log(this.searchWordInput);
         let data = await getSearchData(
           3,
           this.searchWordInput,
@@ -163,7 +178,7 @@ export default {
         this.maps_data = buffData;
         this.pagingToken = data.nextPageToken;
       } else {
-        this.loginUser = this.$store.getters.userID;
+        this.loginUser = this.$store.getters.user;
         let data = await getAllData(3, this.pagingToken);
         let buffData = await downloadImageToBox(data.BuffData);
         this.maps_data = buffData;
@@ -189,5 +204,14 @@ export default {
   margin-left: auto;
   margin-right: auto;
   color: yellow;
+}
+
+.box {
+  display: inline-block;
+  font-size: 16px;
+}
+
+.boxContainer {
+  font-size: 0;
 }
 </style>

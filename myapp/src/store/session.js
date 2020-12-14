@@ -1,6 +1,5 @@
 import router from '@/router'
 import firebase from 'firebase'
-// import { auth } from '@/main'
 
 const state = {
     user: {},

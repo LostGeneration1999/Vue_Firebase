@@ -10,6 +10,18 @@
         <v-form>
           <v-text-field label="タイトル" v-model="data.title" type="text" />
           <v-textarea label="投稿の詳細" v-model="data.comment" />
+          <v-combobox
+            multiple
+            v-model="select"
+            label="Tags"
+            append-icon
+            chips
+            deletable-chips
+            class="tag-input"
+            :search-input.sync="search"
+            @keyup.tab="updateTags"
+            @paste="updateTags"
+          ></v-combobox>
           <div align="center">
             <img v-if="uploadImageUrl" height="170px" :src="this.uploadImageUrl" />
           </div>
@@ -45,13 +57,16 @@ export default {
       imageFile: null,
       uploadImageUrl: null,
       isLoading: false,
+      select: ["就活", "性格", "関心"],
+      search: "",
       data: {
         ID: null,
         displayName: null,
         userID: null,
         title: null,
         comment: null,
-        createdAt: null
+        createdAt: null,
+        tags: []
       }
     };
   },
@@ -71,6 +86,7 @@ export default {
       if (this.data.title != null && this.imageFile != null) {
         this.isLoading = true;
         this.data.userID = this.getUID;
+        this.data.tags = this.select;
         this.data.displayName = this.getUser;
         this.data.ID =
           this.data.userID +
@@ -80,7 +96,6 @@ export default {
         this.data.createdAt = firebase.firestore.Timestamp.fromDate(
           new Date(moment().format("YYYY-MM-DD HH:mm:ss"))
         );
-        // Blobファイルでない例外処理
         uploadImage(this.imageFile, this.data.ID)
           .then(() => {
             postData(this.data);
@@ -110,6 +125,14 @@ export default {
       } else {
         this.uploadImageUrl = "";
       }
+    },
+    updateTags() {
+      this.$nextTick(() => {
+        this.select.push(...this.search.split(","));
+        this.$nextTick(() => {
+          this.search = "";
+        });
+      });
     }
   }
 };
