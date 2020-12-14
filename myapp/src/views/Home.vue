@@ -58,7 +58,7 @@
           <v-card class="ma-2 pa-md-4 mx-lg-auto">
             <v-card-text>
               <v-container id="scroll-target" style="max-height: 500px">
-                <v-row v-scroll:#scroll-target="onScroll" align="top">
+                <v-row>
                   <v-img :src="expansion.file" height="60%" width="100%"></v-img>
                 </v-row>
               </v-container>
@@ -175,7 +175,6 @@ export default {
     search: async function() {
       this.pagingToken = "";
       if (this.searchWordInput.length > 0 || this.searchUserInput != "") {
-        console.log(this.searchWordInput);
         let data = await getSearchData(
           3,
           this.searchWordInput,

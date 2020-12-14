@@ -78,8 +78,7 @@ export async function getSearchData(limit, searchWord, searchUser, pagingToken) 
             nextToken = `${time.seconds}:${time.nanoseconds}`;
         }
         return { "BuffData": snapshot, "nextPageToken": nextToken };
-    }).catch((err) => {
-        console.log(err)
+    }).catch(() => {
         alert("エラーが発生しました");
     });
     return result;
@@ -103,7 +102,6 @@ export function postData(data) {
         userID: data.userID,
         displayName: data.displayName,
     }).then(() => {
-        console.log('データ送信完了')
     }).catch(() => {
         alert('エラーが発生しました');
     })
@@ -112,7 +110,6 @@ export function postData(data) {
 export async function uploadImage(uploadFile, imageURL) {
     var storageRef = storage.ref().child(imageURL);
     return storageRef.put(uploadFile).then(() => {
-        console.log('画像送信完了')
     }).catch(() => {
         alert('エラーが発生しました');
     })
